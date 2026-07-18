@@ -2,13 +2,19 @@
 <!--
     새 여행 추가 방법
     1. 이 파일을 trips/새여행id.html 로 복사합니다. (예: trips/jeju-2027.html)
-    2. <title>, 헤더 문구, 일차 탭 개수, 각 일정 카드 내용을 여행에 맞게 수정합니다.
-       (일차를 늘리거나 줄이려면 nav의 tab-btn 버튼과 tab-content div를 함께 추가/삭제하세요)
-    3. "상세 정보" 탭의 info-card 블록들을 여행에 맞게 채우거나 삭제합니다.
-    4. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
-    5. <body data-trip-id="..."> 값을 3번에서 정한 여행 id와 동일하게 맞춥니다.
-       (일정 카드의 note-slot data-item-id는 이 여행 안에서만 고유하면 됩니다. 예: day1-1, day1-2 ...)
+    2. trips/TEMPLATE-data.js 를 trips/새여행id-data.js 로 복사하고, 이 파일 맨 아래
+       <script> 태그의 파일명도 함께 바꿔줍니다.
+    3. <title>, 헤더 문구, 일차 탭 개수를 여행에 맞게 수정합니다.
+       (일차를 늘리거나 줄이려면 nav의 tab-btn 버튼과 <main>의 tab-content/"-items" div,
+       그리고 새여행id-data.js 의 DEFAULT_ITINERARY 키를 함께 추가/삭제하세요)
+    4. 일정 카드 자체는 HTML을 직접 건드릴 필요 없이, 배포 후 사이트에서 관리자로 로그인해
+       각 일차 탭 하단의 "카드 추가" 버튼과 카드별 편집/삭제 아이콘으로 추가·수정·삭제합니다.
+       new-data.js의 DEFAULT_ITINERARY는 그 전까지 보여줄 초기값일 뿐입니다.
+    5. "상세 정보" 탭의 info-card 블록들을 여행에 맞게 채우거나 삭제합니다.
+    6. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
+    7. <body data-trip-id="..."> 값을 6번에서 정한 여행 id와 동일하게 맞춥니다.
 -->
+
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -124,71 +130,19 @@
         <!-- Day 1 -->
         <div id="day1" class="tab-content active">
             <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">1일차 (MM/DD, 요일)</h2>
-
-            <div class="timeline-item relative z-10 mb-6">
-                <div class="timeline-line"></div>
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
-                        <i class="fa-solid fa-plane-departure"></i>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
-                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~ HH:MM</span>
-                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
-                            일정 제목
-                            <a href="https://www.google.com/maps/search/?api=1&query=" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
-                        </h3>
-                        <p class="text-sm text-slate-600 mt-1">일정 설명</p>
-                        <!-- 메모 기능: 카드마다 이 블록을 추가하세요. data-item-id는 이 여행 안에서 고유해야 합니다. -->
-                        <div class="note-slot mt-2" data-item-id="day1-1" data-item-title="일정 제목">
-                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
-                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
-                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item relative z-10 mb-6">
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
-                        <i class="fa-solid fa-bed"></i>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
-                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~</span>
-                        <h3 class="font-bold text-slate-800">숙소 체크인</h3>
-                        <div class="note-slot mt-2" data-item-id="day1-2" data-item-title="숙소 체크인">
-                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
-                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
-                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="day1-items"></div>
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day1')">
+                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            </button>
         </div>
 
         <!-- Day 2 -->
         <div id="day2" class="tab-content">
             <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">2일차 (MM/DD, 요일)</h2>
-
-            <div class="timeline-item relative z-10 mb-6">
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
-                        <i class="fa-solid fa-plane-arrival"></i>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
-                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~ HH:MM</span>
-                        <h3 class="font-bold text-slate-800">귀국</h3>
-                        <div class="note-slot mt-2" data-item-id="day2-1" data-item-title="귀국">
-                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
-                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
-                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="day2-items"></div>
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day2')">
+                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            </button>
         </div>
 
         <!-- Info -->
@@ -229,6 +183,30 @@
         </div>
     </div>
 
+    <!-- Item Add/Edit Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
+    <div id="item-modal" class="fixed inset-0 z-[65] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeItemModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
+            <h3 id="item-modal-title" class="font-bold text-slate-800 mb-3">카드 추가</h3>
+            <label class="text-xs text-slate-500 font-medium">종류</label>
+            <select id="item-modal-preset" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2"></select>
+            <label class="text-xs text-slate-500 font-medium">시간</label>
+            <input id="item-modal-time" type="text" placeholder="예: 09:00 ~ 10:30" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-slate-500 font-medium">제목</label>
+            <input id="item-modal-title-input" type="text" placeholder="일정 제목" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-slate-500 font-medium">설명 (선택)</label>
+            <textarea id="item-modal-desc" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-20 mb-2" placeholder="세부 설명, URL 링크도 가능"></textarea>
+            <label class="text-xs text-slate-500 font-medium">지도 검색어 (선택)</label>
+            <input id="item-modal-map" type="text" placeholder="예: Tokyo Tower" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
+            <div id="item-modal-status" class="text-xs text-rose-500 mb-2 h-4"></div>
+            <div class="flex gap-2 pb-2">
+                <button type="button" id="item-modal-delete" onclick="deleteItemFromModal()" class="hidden px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="closeItemModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveItem()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -249,5 +227,7 @@
     <script src="../assets/firebase-config.js"></script>
     <script src="../assets/auth.js"></script>
     <script src="../assets/notes.js"></script>
+    <script src="TEMPLATE-data.js"></script>
+    <script src="../assets/itinerary.js"></script>
 </body>
 </html>

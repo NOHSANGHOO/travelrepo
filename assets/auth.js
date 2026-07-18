@@ -18,6 +18,11 @@
             firebase.initializeApp(firebaseConfig);
         }
         auth = firebase.auth();
+        try {
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        } catch (err) {
+            console.warn("로그인 지속성 설정에 실패했습니다.", err);
+        }
         if (typeof firebase.analytics === "function") {
             try {
                 analytics = firebase.analytics();
