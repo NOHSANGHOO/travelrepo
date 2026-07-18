@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!--
+    새 여행 추가 방법
+    1. 이 파일을 trips/새여행id.html 로 복사합니다. (예: trips/jeju-2027.html)
+    2. <title>, 헤더 문구, 일차 탭 개수, 각 일정 카드 내용을 여행에 맞게 수정합니다.
+       (일차를 늘리거나 줄이려면 nav의 tab-btn 버튼과 tab-content div를 함께 추가/삭제하세요)
+    3. "상세 정보" 탭의 info-card 블록들을 여행에 맞게 채우거나 삭제합니다.
+    4. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
+-->
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OOO 님의 OOO 여행</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+        .timeline-item:last-child .timeline-line::before { display: none; }
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #4f46e5;
+            background-color: #e0e7ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .map-btn:hover { background-color: #c7d2fe; }
+        .map-btn i { margin-right: 3px; }
+        .info-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+        .info-card-header {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+        .info-card-header i { margin-right: 0.5rem; font-size: 1.1rem; }
+        .data-row { display: flex; margin-bottom: 0.5rem; font-size: 0.875rem; }
+        .data-label { width: 80px; color: #64748b; font-weight: 500; flex-shrink: 0; }
+        .data-value { color: #334155; flex-grow: 1; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header -->
+    <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
+        <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1 mb-2"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+        <div class="flex justify-between items-center mb-2">
+            <h1 class="text-xl font-bold">OOO 님의 OOO 여행 ✈️</h1>
+            <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">N박 N일</span>
+        </div>
+        <p class="text-sm text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> 여행지</p>
+        <p class="text-sm text-slate-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> YYYY.MM.DD(요일) - MM.DD(요일)</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-sm sticky top-[132px] z-40">
+        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-slate-500 whitespace-nowrap px-2">
+            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-slate-900 border-b-2 border-slate-800 transition-colors">1일차</button>
+            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">2일차</button>
+            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">상세 정보</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="p-4 max-w-lg mx-auto">
+
+        <!-- Day 1 -->
+        <div id="day1" class="tab-content active">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">1일차 (MM/DD, 요일)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~ HH:MM</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            일정 제목
+                            <a href="https://www.google.com/maps/search/?api=1&query=" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1">일정 설명</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~</span>
+                        <h3 class="font-bold text-slate-800">숙소 체크인</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div id="day2" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">2일차 (MM/DD, 요일)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-plane-arrival"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~ HH:MM</span>
+                        <h3 class="font-bold text-slate-800">귀국</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div id="info" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">여행 상세 정보</h2>
+
+            <div class="info-card">
+                <div class="info-card-header text-sky-600">
+                    <i class="fa-solid fa-plane"></i> 항공편 정보
+                </div>
+                <div class="data-row"><div class="data-label">편명</div><div class="data-value">내용</div></div>
+                <div class="data-row"><div class="data-label">좌석</div><div class="data-value">내용</div></div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header text-indigo-500">
+                    <i class="fa-solid fa-hotel"></i> 숙소 정보
+                </div>
+                <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN / OUT</div></div>
+                <div class="data-row"><div class="data-label">연락처</div><div class="data-value">내용</div></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+                el.classList.add('text-slate-500');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('text-slate-500');
+            activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+        }
+    </script>
+</body>
+</html>
