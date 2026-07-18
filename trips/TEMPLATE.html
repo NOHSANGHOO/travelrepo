@@ -215,7 +215,22 @@
 
     </main>
 
-    <!-- Note Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
+    <!-- Admin Login Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeAdminLoginModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
+            <h3 class="font-bold text-slate-800 mb-3">관리자 로그인</h3>
+            <input id="admin-login-email" type="email" placeholder="이메일" autocomplete="username" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300">
+            <input id="admin-login-password" type="password" placeholder="비밀번호" autocomplete="current-password" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300">
+            <div id="admin-login-status" class="text-xs text-rose-500 mb-2 h-4"></div>
+            <div class="flex gap-2 pb-2">
+                <button type="button" onclick="closeAdminLoginModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="submitAdminLogin()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">로그인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
     <div id="note-modal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeNoteModal()"></div>
         <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
@@ -242,7 +257,10 @@
             activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
         }
     </script>
-    <script src="../assets/notes-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="../assets/firebase-config.js"></script>
     <script src="../assets/notes.js"></script>
 </body>
 </html>

@@ -9,9 +9,8 @@ index.html               여행 목록(첫 화면)
 assets/trips-data.js     여행 목록에 표시되는 메타데이터 (제목, 기간, 링크 등)
 assets/site.js           목록 페이지 렌더링/필터 로직
 assets/access-gate.js    사이트 열람 비밀번호 게이트
-assets/notes-config.js   메모 데이터가 저장될 GitHub 저장소 정보 설정
+assets/firebase-config.js   Firebase 프로젝트 연결 정보 (메모 저장용 DB)
 assets/notes.js          메모 모달 열기/저장/조회 + 관리자 로그인 로직 (모든 여행 상세 페이지 공용)
-data/notes.json          모든 여행의 메모가 실제로 저장되는 파일 (커밋으로 갱신됨)
 trips/kobe-arima-2026.html   고베-아리마 여행 상세 페이지
 trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
 .github/workflows/pages.yml  GitHub Pages 자동 배포 워크플로우
@@ -64,31 +63,54 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
 - 브라우저 개발자도구(F12) → Elements/페이지 소스 보기를 하면 비밀번호를 몰라도 이미 로드된 내용이 그대로 보입니다.
 - 즉 "링크를 몰라서 못 들어오는" 수준의 캐주얼한 방문자만 막을 수 있고, 작정하고 보려는 사람은 막을 수 없습니다. 진짜로 비공개가 필요하면 저장소를 다시 비공개로 돌리고 유료 GitHub Pages(Pro)를 쓰는 방법을 고려해야 합니다.
 
-## 일정 메모 기능
+## 일정 메모 기능 (Firebase)
 
-각 일정 카드의 "메모" 버튼은 별도 DB나 외부 서비스 없이, 이 저장소 안의 `data/notes.json` 파일에 직접 커밋되는 방식으로 동작합니다.
+각 일정 카드의 "메모" 버튼은 무료 DB인 **Firebase(Firestore + Authentication)**를 사용합니다.
 
-- **읽기**: 누구나(비밀번호만 통과하면) 메모를 볼 수 있습니다. GitHub 로그인 불필요.
-- **쓰기**: 헤더 오른쪽 위 자물쇠 아이콘으로 "관리자 로그인"을 해야만 메모를 새로 쓰거나 수정할 수 있습니다.
+- **읽기**: 누구나(비밀번호만 통과하면) 메모를 볼 수 있습니다. 로그인 불필요, 여러 기기에서 실시간으로 반영됩니다.
+- **쓰기**: 헤더 오른쪽 위 자물쇠 아이콘으로 이메일/비밀번호 로그인을 해야만 메모를 새로 쓰거나 수정할 수 있습니다.
 
-### 관리자 로그인(쓰기 권한) 설정 방법
+### 최초 1회 설정
 
-1. GitHub 우측 상단 프로필 아이콘 → **Settings**
-2. 왼쪽 맨 아래 **Developer settings** 클릭
-3. **Personal access tokens → Fine-grained tokens** → **Generate new token**
-4. 설정:
-   - **Token name**: 아무 이름 (예: `travelrepo-notes`)
-   - **Expiration**: 원하는 기간 (예: 90일 — 만료되면 다시 발급해서 재로그인하면 됩니다)
-   - **Repository access**: **Only select repositories** → `travelrepo` 선택
-   - **Permissions → Repository permissions → Contents**: **Read and write**로 변경 (다른 권한은 전부 그대로 No access 유지)
-5. **Generate token** 클릭 → 생성된 토큰 값을 복사합니다 (`github_pat_...`로 시작). **이 화면을 벗어나면 다시 볼 수 없으니 즉시 복사하세요.**
-6. 사이트의 여행 상세 페이지에서 헤더 오른쪽 위 **자물쇠 아이콘** 클릭 → 뜨는 입력창에 방금 복사한 토큰 붙여넣기
-7. 이제 자물쇠 아이콘이 열린 자물쇠로 바뀌고, 메모 버튼을 누르면 편집 및 저장이 가능합니다. 저장하면 이 저장소의 `data/notes.json`에 실제 커밋이 생깁니다.
+1. **[console.firebase.google.com](https://console.firebase.google.com)** 접속 → 구글 계정으로 로그인 → **프로젝트 만들기** (이름 자유, Google Analytics는 꺼도 무방)
+2. 왼쪽 메뉴 **빌드(Build) → Firestore Database → 데이터베이스 만들기** → 위치는 `asia-northeast3 (Seoul)` 권장 → 생성 (보안 규칙은 일단 아무 값이나 선택하고 진행, 3번에서 교체합니다)
+3. Firestore 화면의 **규칙(Rules)** 탭을 열고 아래 규칙으로 교체 후 **게시(Publish)**:
 
-로그아웃하려면 자물쇠(열림) 아이콘을 다시 눌러 확인하면 이 기기에서 토큰이 삭제됩니다.
+   ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /notes/{tripId} {
+         allow read: if true;
+         allow write: if request.auth != null;
+       }
+     }
+   }
+   ```
+
+   (읽기는 누구나 허용, 쓰기는 로그인한 사용자만 허용 — 실제 접근 제어는 여기서 이루어집니다.)
+
+4. 왼쪽 메뉴 **빌드(Build) → Authentication → 시작하기 → Sign-in method** 탭 → **이메일/비밀번호** 사용 설정
+5. **Users** 탭 → **사용자 추가** → 본인 이메일 + 사이트 로그인용 비밀번호로 관리자 계정 1개 생성 (이 계정으로 사이트에 로그인해서 메모를 씁니다)
+6. 왼쪽 상단 **⚙️ → 프로젝트 설정** → 맨 아래 **내 앱 → `</>`(웹 앱 추가)** → 아무 닉네임으로 등록 → 나오는 `firebaseConfig` 객체를 복사
+7. 이 저장소의 `assets/firebase-config.js`를 열어 복사한 값을 그대로 채워넣습니다.
+
+   ```js
+   const firebaseConfig = {
+       apiKey: "...",
+       authDomain: "...",
+       projectId: "...",
+       storageBucket: "...",
+       messagingSenderId: "...",
+       appId: "..."
+   };
+   ```
+
+8. 커밋 후 `main`에 푸시하면 재배포되고, 사이트 헤더의 자물쇠 아이콘으로 5번에서 만든 계정으로 로그인해 메모를 남길 수 있습니다.
+
+로그아웃하려면 자물쇠(열림) 아이콘을 다시 눌러 확인하면 됩니다.
 
 **참고 / 한계**
-- 토큰은 로그인한 사람의 브라우저(localStorage)에만 저장되고, 코드나 저장소에는 절대 커밋되지 않습니다.
-- 토큰을 발급할 때 **Contents: Read and write 권한만, 이 저장소 하나에만** 부여하면 다른 저장소나 계정 전체에는 영향이 없습니다. 더 이상 필요 없으면 GitHub 설정에서 언제든 즉시 폐기(revoke)할 수 있습니다.
-- 저장소가 Public이므로, 메모 저장 시 생기는 커밋도 다른 커밋들처럼 공개적으로 보입니다.
-- 메모를 읽어오는 쪽은 `raw.githubusercontent.com`의 캐시를 거치기 때문에, 저장 직후 자신의 화면은 바로 갱신되지만 다른 사람 화면에는 반영까지 짧은 지연(보통 1분 이내)이 있을 수 있습니다.
+- `firebaseConfig`의 값들(apiKey 등)은 비밀값이 아니라 공개 식별자라서 사이트 코드에 그대로 있어도 안전합니다. 실제 쓰기 권한은 3번의 Firestore 규칙과 5번의 로그인 계정으로 통제됩니다.
+- 무료(Spark) 요금제 기준 하루 약 5만 회 읽기 / 2만 회 쓰기까지 무료라 가족 여행 메모 용도로는 충분합니다.
+- 로그인 세션은 브라우저에 저장되어 다음 방문 때도 유지되며, 다른 기기/브라우저에서는 각자 다시 로그인해야 합니다.
