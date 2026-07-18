@@ -102,10 +102,27 @@
 </head>
 <body class="pb-20" data-trip-id="kobe-arima-2026">
 
+    <div id="access-gate" class="fixed inset-0 z-[100] bg-slate-800 flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
+            <i class="fa-solid fa-lock text-3xl text-slate-400 mb-3"></i>
+            <h2 class="font-bold text-slate-800 mb-1">비밀번호 확인</h2>
+            <p class="text-xs text-slate-500 mb-4">여행 계획을 보려면 비밀번호를 입력하세요</p>
+            <input id="access-gate-input" type="password" inputmode="numeric" maxlength="8" class="w-full border border-slate-200 rounded-lg p-2 text-center text-lg tracking-widest mb-2" placeholder="••••" autocomplete="off">
+            <p id="access-gate-error" class="text-xs text-rose-500 mb-2 h-4"></p>
+            <button id="access-gate-submit" type="button" class="w-full py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">확인</button>
+        </div>
+    </div>
+    <script src="../assets/access-gate.js"></script>
+
 
     <!-- Header -->
     <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
-        <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1 mb-2"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+        <div class="flex justify-between items-center mb-2">
+            <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+            <button type="button" onclick="toggleAdminLogin()" class="text-slate-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="관리자 로그인 (메모 편집)">
+                <i id="admin-login-icon" class="fa-solid fa-lock"></i>
+            </button>
+        </div>
         <div class="flex justify-between items-center mb-2">
             <h1 class="text-xl font-bold">상후 님의 가족여행 ✈️</h1>
             <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">3박 4일</span>
@@ -797,8 +814,8 @@
             <textarea id="note-modal-textarea" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
             <div id="note-modal-status" class="text-xs text-slate-400 mt-1 h-4"></div>
             <div class="flex gap-2 mt-3 pb-2">
-                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
-                <button type="button" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">닫기</button>
+                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
             </div>
         </div>
     </div>
