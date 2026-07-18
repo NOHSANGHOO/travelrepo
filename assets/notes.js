@@ -1,11 +1,8 @@
 (function () {
     const TRIP_ID = document.body.dataset.tripId;
-    const ADMIN_EMAIL = "setario87@gmail.com";
     let currentItemId = null;
     let notesData = {};
-    let db = null;
-    let auth = null;
-    let isReady = false;
+    let listenerStarted = false;
 
     function escapeHtml(str) {
         return str
@@ -24,24 +21,21 @@
             .replace(/\n/g, "<br>");
     }
 
-    function isAdmin() {
-        return !!(auth && auth.currentUser && auth.currentUser.email === ADMIN_EMAIL);
-    }
-
     function renderSlot(itemId) {
         const slot = document.querySelector(`.note-slot[data-item-id="${itemId}"]`);
         if (!slot) return;
         const display = slot.querySelector(".note-display");
         const label = slot.querySelector(".note-btn-label");
         const entry = notesData[itemId];
+        const admin = window.isAdmin && window.isAdmin();
         if (entry && entry.note) {
             display.innerHTML = linkify(entry.note);
             display.classList.remove("hidden");
-            label.textContent = isAdmin() ? "메모 수정" : "메모 보기";
+            label.textContent = admin ? "메모 수정" : "메모 보기";
         } else {
             display.innerHTML = "";
             display.classList.add("hidden");
-            label.textContent = isAdmin() ? "메모" : "메모 보기";
+            label.textContent = admin ? "메모" : "메모 보기";
         }
     }
 
@@ -51,90 +45,23 @@
         });
     }
 
-    function updateAdminUI() {
-        const icon = document.getElementById("admin-login-icon");
-        if (!icon) return;
-        if (isAdmin()) {
-            icon.classList.remove("fa-lock");
-            icon.classList.add("fa-unlock");
-            icon.closest("button").title = "로그인됨 (클릭하여 로그아웃)";
-        } else {
-            icon.classList.remove("fa-unlock");
-            icon.classList.add("fa-lock");
-            icon.closest("button").title = "관리자 로그인 (메모 편집)";
-        }
-    }
-
-    function initFirebase() {
-        if (typeof firebase === "undefined" || typeof firebaseConfig === "undefined" || !firebaseConfig.apiKey) {
-            console.warn("Firebase 설정이 아직 연결되지 않았습니다. assets/firebase-config.js를 확인하세요.");
-            return;
-        }
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        db = firebase.firestore();
-        auth = firebase.auth();
-        isReady = true;
-
-        auth.onAuthStateChanged(function () {
-            updateAdminUI();
-            renderAllSlots();
-        });
-
-        if (TRIP_ID) {
-            db.collection("notes")
-                .doc(TRIP_ID)
-                .onSnapshot(
-                    function (doc) {
-                        notesData = doc.exists ? doc.data() : {};
-                        renderAllSlots();
-                    },
-                    function (err) {
-                        console.error("메모를 불러오지 못했습니다.", err);
-                    }
-                );
-        }
-    }
-
-    // ---- Admin login ----
-    window.toggleAdminLogin = function () {
-        if (isAdmin()) {
-            if (confirm("로그아웃 하시겠습니까?")) {
-                auth.signOut();
-            }
-            return;
-        }
-        if (!isReady) {
-            alert("Firebase 설정이 아직 연결되지 않았습니다. assets/firebase-config.js를 확인하세요.");
-            return;
-        }
-        document.getElementById("admin-login-status").textContent = "";
-        document.getElementById("admin-login-modal").classList.remove("hidden");
-    };
-
-    window.closeAdminLoginModal = function () {
-        document.getElementById("admin-login-modal").classList.add("hidden");
-    };
-
-    window.googleSignIn = function () {
-        const statusEl = document.getElementById("admin-login-status");
-        statusEl.textContent = "로그인 중...";
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider)
-            .then(function (result) {
-                if (result.user.email !== ADMIN_EMAIL) {
-                    return auth.signOut().then(function () {
-                        statusEl.textContent = "관리자로 등록된 계정이 아닙니다.";
-                    });
+    function startNotesListener() {
+        if (listenerStarted || !TRIP_ID) return;
+        listenerStarted = true;
+        firebase
+            .firestore()
+            .collection("notes")
+            .doc(TRIP_ID)
+            .onSnapshot(
+                function (doc) {
+                    notesData = doc.exists ? doc.data() : {};
+                    renderAllSlots();
+                },
+                function (err) {
+                    console.error("메모를 불러오지 못했습니다.", err);
                 }
-                window.closeAdminLoginModal();
-            })
-            .catch(function (err) {
-                statusEl.textContent = "로그인 실패. 다시 시도해주세요.";
-                console.error(err);
-            });
-    };
+            );
+    }
 
     // ---- Note modal ----
     window.openNoteModal = function (btn) {
@@ -148,14 +75,14 @@
 
         const saveBtn = document.getElementById("note-modal-save");
         const statusEl = document.getElementById("note-modal-status");
-        if (isAdmin()) {
+        if (window.isAdmin && window.isAdmin()) {
             textarea.disabled = false;
             saveBtn.classList.remove("hidden");
             statusEl.textContent = "";
         } else {
             textarea.disabled = true;
             saveBtn.classList.add("hidden");
-            statusEl.textContent = "보기 전용입니다. 편집하려면 오른쪽 위 자물쇠 아이콘으로 로그인하세요.";
+            statusEl.textContent = "보기 전용입니다. 관리자 계정으로 로그인해야 편집할 수 있습니다.";
         }
         document.getElementById("note-modal").classList.remove("hidden");
     };
@@ -166,11 +93,13 @@
     };
 
     window.saveNote = function () {
-        if (!currentItemId || !isAdmin() || !db) return;
+        if (!currentItemId || !window.isAdmin || !window.isAdmin()) return;
         const statusEl = document.getElementById("note-modal-status");
         const note = document.getElementById("note-modal-textarea").value;
         statusEl.textContent = "저장 중...";
-        db.collection("notes")
+        firebase
+            .firestore()
+            .collection("notes")
             .doc(TRIP_ID)
             .set({ [currentItemId]: { note: note, updatedAt: new Date().toISOString() } }, { merge: true })
             .then(function () {
@@ -185,5 +114,11 @@
             });
     };
 
-    document.addEventListener("DOMContentLoaded", initFirebase);
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof window.onAuthChange !== "function") return;
+        window.onAuthChange(function (user) {
+            if (user) startNotesListener();
+            renderAllSlots();
+        });
+    });
 })();

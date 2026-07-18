@@ -8,5 +8,6 @@ const firebaseConfig = {
     projectId: "mytravel-b7298",
     storageBucket: "mytravel-b7298.firebasestorage.app",
     messagingSenderId: "566628515334",
-    appId: "1:566628515334:web:a6909ae3195fd8d6ac0d87"
+    appId: "1:566628515334:web:a6909ae3195fd8d6ac0d87",
+    measurementId: "G-QMEF4KJ61X"
 };
