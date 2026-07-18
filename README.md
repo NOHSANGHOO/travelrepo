@@ -68,12 +68,12 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
 각 일정 카드의 "메모" 버튼은 무료 DB인 **Firebase(Firestore + Authentication)**를 사용합니다.
 
 - **읽기**: 누구나(비밀번호만 통과하면) 메모를 볼 수 있습니다. 로그인 불필요, 여러 기기에서 실시간으로 반영됩니다.
-- **쓰기**: 헤더 오른쪽 위 자물쇠 아이콘으로 이메일/비밀번호 로그인을 해야만 메모를 새로 쓰거나 수정할 수 있습니다.
+- **쓰기**: 헤더 오른쪽 위 자물쇠 아이콘으로 **지정된 구글 계정(`setario87@gmail.com`)** 으로 로그인해야만 메모를 새로 쓰거나 수정할 수 있습니다.
 
 ### 최초 1회 설정
 
 1. **[console.firebase.google.com](https://console.firebase.google.com)** 접속 → 구글 계정으로 로그인 → **프로젝트 만들기** (이름 자유, Google Analytics는 꺼도 무방)
-2. 왼쪽 메뉴 **빌드(Build) → Firestore Database → 데이터베이스 만들기** → 위치는 `asia-northeast3 (Seoul)` 권장 → 생성 (보안 규칙은 일단 아무 값이나 선택하고 진행, 3번에서 교체합니다)
+2. 왼쪽 메뉴에서 **데이터베이스 및 스토리지 → Firestore Database → 데이터베이스 만들기** → 위치는 `asia-northeast3 (Seoul)` 권장 → 생성 (보안 규칙은 일단 아무 값이나 선택하고 진행, 3번에서 교체합니다)
 3. Firestore 화면의 **규칙(Rules)** 탭을 열고 아래 규칙으로 교체 후 **게시(Publish)**:
 
    ```
@@ -82,16 +82,17 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
      match /databases/{database}/documents {
        match /notes/{tripId} {
          allow read: if true;
-         allow write: if request.auth != null;
+         allow write: if request.auth != null
+                       && request.auth.token.email == 'setario87@gmail.com';
        }
      }
    }
    ```
 
-   (읽기는 누구나 허용, 쓰기는 로그인한 사용자만 허용 — 실제 접근 제어는 여기서 이루어집니다.)
+   (읽기는 누구나 허용, 쓰기는 지정된 이메일로 로그인한 경우만 허용 — 실제 접근 제어는 여기서 이루어집니다.)
 
-4. 왼쪽 메뉴 **빌드(Build) → Authentication → 시작하기 → Sign-in method** 탭 → **이메일/비밀번호** 사용 설정
-5. **Users** 탭 → **사용자 추가** → 본인 이메일 + 사이트 로그인용 비밀번호로 관리자 계정 1개 생성 (이 계정으로 사이트에 로그인해서 메모를 씁니다)
+4. 왼쪽 메뉴에서 **보안 → Authentication → 시작하기 → Sign-in method** 탭 → **Google** 사용 설정 (Email/Password는 켤 필요 없음)
+5. 같은 화면(Authentication) → **Settings 탭 → Authorized domains** → **도메인 추가** → `nohsanghoo.github.io` 입력하고 추가 (이 목록에 없는 도메인에서는 구글 로그인 팝업이 차단되어 실패합니다)
 6. 왼쪽 상단 **⚙️ → 프로젝트 설정** → 맨 아래 **내 앱 → `</>`(웹 앱 추가)** → 아무 닉네임으로 등록 → 나오는 `firebaseConfig` 객체를 복사
 7. 이 저장소의 `assets/firebase-config.js`를 열어 복사한 값을 그대로 채워넣습니다.
 
@@ -106,11 +107,12 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
    };
    ```
 
-8. 커밋 후 `main`에 푸시하면 재배포되고, 사이트 헤더의 자물쇠 아이콘으로 5번에서 만든 계정으로 로그인해 메모를 남길 수 있습니다.
+8. 커밋 후 `main`에 푸시하면 재배포되고, 사이트 헤더의 자물쇠 아이콘 → **Google 계정으로 로그인**을 누르면 `setario87@gmail.com` 계정으로 로그인해 메모를 남길 수 있습니다. 다른 구글 계정으로 로그인을 시도하면 자동으로 거부됩니다.
 
 로그아웃하려면 자물쇠(열림) 아이콘을 다시 눌러 확인하면 됩니다.
 
 **참고 / 한계**
-- `firebaseConfig`의 값들(apiKey 등)은 비밀값이 아니라 공개 식별자라서 사이트 코드에 그대로 있어도 안전합니다. 실제 쓰기 권한은 3번의 Firestore 규칙과 5번의 로그인 계정으로 통제됩니다.
+- `firebaseConfig`의 값들(apiKey 등)은 비밀값이 아니라 공개 식별자라서 사이트 코드에 그대로 있어도 안전합니다. 실제 쓰기 권한은 3번의 Firestore 규칙(허용 이메일 검사)이 서버 쪽에서 최종적으로 통제합니다.
+- 관리자 이메일을 바꾸려면 `assets/notes.js`의 `ADMIN_EMAIL` 상수와 Firestore 규칙의 이메일을 **둘 다** 같이 바꿔야 합니다 (하나만 바꾸면 어긋납니다).
 - 무료(Spark) 요금제 기준 하루 약 5만 회 읽기 / 2만 회 쓰기까지 무료라 가족 여행 메모 용도로는 충분합니다.
 - 로그인 세션은 브라우저에 저장되어 다음 방문 때도 유지되며, 다른 기기/브라우저에서는 각자 다시 로그인해야 합니다.

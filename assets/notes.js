@@ -1,5 +1,6 @@
 (function () {
     const TRIP_ID = document.body.dataset.tripId;
+    const ADMIN_EMAIL = "setario87@gmail.com";
     let currentItemId = null;
     let notesData = {};
     let db = null;
@@ -24,7 +25,7 @@
     }
 
     function isAdmin() {
-        return !!(auth && auth.currentUser);
+        return !!(auth && auth.currentUser && auth.currentUser.email === ADMIN_EMAIL);
     }
 
     function renderSlot(itemId) {
@@ -108,28 +109,29 @@
             alert("Firebase 설정이 아직 연결되지 않았습니다. assets/firebase-config.js를 확인하세요.");
             return;
         }
-        document.getElementById("admin-login-email").value = "";
-        document.getElementById("admin-login-password").value = "";
         document.getElementById("admin-login-status").textContent = "";
         document.getElementById("admin-login-modal").classList.remove("hidden");
-        document.getElementById("admin-login-email").focus();
     };
 
     window.closeAdminLoginModal = function () {
         document.getElementById("admin-login-modal").classList.add("hidden");
     };
 
-    window.submitAdminLogin = function () {
-        const email = document.getElementById("admin-login-email").value.trim();
-        const password = document.getElementById("admin-login-password").value;
+    window.googleSignIn = function () {
         const statusEl = document.getElementById("admin-login-status");
         statusEl.textContent = "로그인 중...";
-        auth.signInWithEmailAndPassword(email, password)
-            .then(function () {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+            .then(function (result) {
+                if (result.user.email !== ADMIN_EMAIL) {
+                    return auth.signOut().then(function () {
+                        statusEl.textContent = "관리자로 등록된 계정이 아닙니다.";
+                    });
+                }
                 window.closeAdminLoginModal();
             })
             .catch(function (err) {
-                statusEl.textContent = "로그인 실패: 이메일 또는 비밀번호를 확인하세요.";
+                statusEl.textContent = "로그인 실패. 다시 시도해주세요.";
                 console.error(err);
             });
     };
