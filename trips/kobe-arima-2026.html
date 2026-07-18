@@ -100,12 +100,29 @@
         }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-20" data-trip-id="kobe-arima-2026">
+
+    <div id="access-gate" class="fixed inset-0 z-[100] bg-slate-800 flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
+            <i class="fa-solid fa-lock text-3xl text-slate-400 mb-3"></i>
+            <h2 class="font-bold text-slate-800 mb-1">비밀번호 확인</h2>
+            <p class="text-xs text-slate-500 mb-4">여행 계획을 보려면 비밀번호를 입력하세요</p>
+            <input id="access-gate-input" type="password" inputmode="numeric" maxlength="8" class="w-full border border-slate-200 rounded-lg p-2 text-center text-lg tracking-widest mb-2" placeholder="••••" autocomplete="off">
+            <p id="access-gate-error" class="text-xs text-rose-500 mb-2 h-4"></p>
+            <button id="access-gate-submit" type="button" class="w-full py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">확인</button>
+        </div>
+    </div>
+    <script src="../assets/access-gate.js"></script>
 
 
     <!-- Header -->
     <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
-        <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1 mb-2"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+        <div class="flex justify-between items-center mb-2">
+            <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+            <button type="button" onclick="toggleAdminLogin()" class="text-slate-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="관리자 로그인 (메모 편집)">
+                <i id="admin-login-icon" class="fa-solid fa-lock"></i>
+            </button>
+        </div>
         <div class="flex justify-between items-center mb-2">
             <h1 class="text-xl font-bold">상후 님의 가족여행 ✈️</h1>
             <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">3박 4일</span>
@@ -149,6 +166,12 @@
                             <strong>차량:</strong> X3 (192무5604) <br>
                             <strong>예약번호:</strong> 358633720656
                         </div>
+                        <div class="note-slot mt-2" data-item-id="day1-1" data-item-title="인천공항 발렛파킹 인도">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -165,6 +188,12 @@
                         <h3 class="font-bold text-slate-800">인천 출발 → 간사이 도착</h3>
                         <p class="text-sm text-slate-600 mt-1">피치항공 MM712 (약 1시간 50분)</p>
                         <p class="text-xs text-sky-600 mt-1 font-medium">좌석: 21D, 21E, 21F</p>
+                        <div class="note-slot mt-2" data-item-id="day1-2" data-item-title="인천 출발 → 간사이 도착">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,6 +209,12 @@
                         <span class="text-xs font-bold text-slate-500 mb-1 block">09:20 ~ 12:00</span>
                         <h3 class="font-bold text-slate-800">고베 산노미야로 이동</h3>
                         <p class="text-sm text-slate-600 mt-1">간사이 T2 승차장 → 산노미야 직행 리무진</p>
+                        <div class="note-slot mt-2" data-item-id="day1-3" data-item-title="고베 산노미야로 이동">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -198,6 +233,12 @@
                         </h3>
                         <p class="text-sm text-slate-600 mt-1">고베 규 스테이크 런치</p>
                         <p class="text-xs text-slate-500 mt-1">* 호텔에 짐 먼저 맡기고 이동</p>
+                        <div class="note-slot mt-2" data-item-id="day1-4" data-item-title="점심: 스테이크랜드">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -217,6 +258,12 @@
                         </h3>
                         <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Starbucks+Kobe+Kitano+Ijinkan" target="_blank" class="text-indigo-600 underline">스타벅스</a>, 풍향계의 집 등</p>
                         <p class="text-xs text-rose-600 bg-rose-50 p-2 rounded mt-2"><i class="fa-solid fa-sun"></i> 오르막은 시티루프버스(260엔)나 택시 이용!</p>
+                        <div class="note-slot mt-2" data-item-id="day1-5" data-item-title="기타노 이진칸 거리">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -234,6 +281,12 @@
                             호텔 몬토레 고베 체크인
                             <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Monterey+Kobe" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
+                        <div class="note-slot mt-2" data-item-id="day1-6" data-item-title="호텔 몬토레 고베 체크인">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -247,6 +300,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">19:00 ~ 21:00</span>
                         <h3 class="font-bold text-slate-800">저녁: 산노미야 이자카야</h3>
+                        <div class="note-slot mt-2" data-item-id="day1-7" data-item-title="저녁: 산노미야 이자카야">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -266,6 +325,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">08:30 ~ 09:30</span>
                         <h3 class="font-bold text-slate-800">호텔 조식</h3>
+                        <div class="note-slot mt-2" data-item-id="day2-1" data-item-title="호텔 조식">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -284,6 +349,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Kobe+Suma+Sea+World" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1">서일본 유일 범고래 쇼 & 돌고래 쇼 (우비 필참)</p>
+                        <div class="note-slot mt-2" data-item-id="day2-2" data-item-title="고베 스마 씨월드">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -301,6 +372,12 @@
                             원조평양냉면본점
                             <a href="https://www.google.com/maps/search/?api=1&query=%E5%85%83%E7%A5%96%E5%B9%B3%E5%A3%8C%E5%86%B7%E9%BA%BA%E6%9C%AC%E5%BA%97+Kobe" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
+                        <div class="note-slot mt-2" data-item-id="day2-3" data-item-title="원조평양냉면본점">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -319,6 +396,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Sannomiya+Center+Gai" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kaldi+Coffee+Farm+Sannomiya" target="_blank" class="text-indigo-600 underline">칼디 커피팜</a>, 한큐백화점 등 실내 쇼핑</p>
+                        <div class="note-slot mt-2" data-item-id="day2-4" data-item-title="산노미야 아케이드 쇼핑">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -332,6 +415,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">18:00 ~ 20:30</span>
                         <h3 class="font-bold text-slate-800">저녁 식사 & 호텔 복귀</h3>
+                        <div class="note-slot mt-2" data-item-id="day2-5" data-item-title="저녁 식사 & 호텔 복귀">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -352,6 +441,12 @@
                         <span class="text-xs font-bold text-slate-500 mb-1 block">08:30 ~ 09:30</span>
                         <h3 class="font-bold text-slate-800">조식 및 체크아웃</h3>
                         <p class="text-sm text-slate-600 mt-1">프론트에 캐리어 보관</p>
+                        <div class="note-slot mt-2" data-item-id="day3-1" data-item-title="조식 및 체크아웃">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -370,6 +465,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Kobe+Animal+Kingdom" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kobe+Anpanman+Childrens+Museum" target="_blank" class="text-indigo-600 underline">호빵맨 박물관</a>, umie MOSAIC 구경</p>
+                        <div class="note-slot mt-2" data-item-id="day3-2" data-item-title="동물 왕국 & 호빵맨 박물관">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -388,6 +489,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Uobei+Sannomiya" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1">식사 후 호텔 짐 찾기(15:30)</p>
+                        <div class="note-slot mt-2" data-item-id="day3-3" data-item-title="점심: 스시 (우오베이 등)">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -406,6 +513,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Raconter+Arima" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kin+no+Yu+Arima" target="_blank" class="text-indigo-600 underline">킨노유 무료족욕탕</a>, 탄산센베 구경</p>
+                        <div class="note-slot mt-2" data-item-id="day3-4" data-item-title="라코떼 아리마 & 마을 산책">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -419,6 +532,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">18:30 ~</span>
                         <h3 class="font-bold text-slate-800">석식 (가이세키) & 온천욕</h3>
+                        <div class="note-slot mt-2" data-item-id="day3-5" data-item-title="석식 (가이세키) & 온천욕">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -439,6 +558,12 @@
                         <span class="text-xs font-bold text-slate-500 mb-1 block">06:00 ~ 09:30</span>
                         <h3 class="font-bold text-slate-800">아침 온천 및 조식</h3>
                         <p class="text-sm text-slate-600 mt-1">화식 뷔페 조식 후 09:30 체크아웃</p>
+                        <div class="note-slot mt-2" data-item-id="day4-1" data-item-title="아침 온천 및 조식">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -456,6 +581,12 @@
                             아리마 완구 박물관
                             <a href="https://www.google.com/maps/search/?api=1&query=Arima+Toys+and+Automata+Museum" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
+                        <div class="note-slot mt-2" data-item-id="day4-2" data-item-title="아리마 완구 박물관">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -474,6 +605,12 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=Ichiran+Sannomiya" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1">산노미야 복귀 후 점심 및 드럭스토어 쇼핑 완료하기 (T2 면세점 작음)</p>
+                        <div class="note-slot mt-2" data-item-id="day4-3" data-item-title="이치란 라멘 & 막판 쇼핑">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -489,6 +626,12 @@
                         <span class="text-xs font-bold text-slate-500 mb-1 block">19:40 ~ 21:35</span>
                         <h3 class="font-bold text-slate-800">간사이 출발 → 인천 귀국</h3>
                         <p class="text-sm text-slate-600 mt-1">피치항공 MM711</p>
+                        <div class="note-slot mt-2" data-item-id="day4-4" data-item-title="간사이 출발 → 인천 귀국">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -503,6 +646,12 @@
                         <span class="text-xs font-bold text-slate-500 mb-1 block">22:00 ~</span>
                         <h3 class="font-bold text-slate-800">차량 수령 및 귀가</h3>
                         <p class="text-sm text-slate-600 mt-1">B1층 A구역15 (M-Parking 발렛)</p>
+                        <div class="note-slot mt-2" data-item-id="day4-5" data-item-title="차량 수령 및 귀가">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -657,6 +806,34 @@
     </main>
 
 
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeAdminLoginModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto text-center">
+            <h3 class="font-bold text-slate-800 mb-1">관리자 로그인</h3>
+            <p class="text-xs text-slate-500 mb-4">허용된 구글 계정으로만 메모 편집이 가능합니다</p>
+            <button type="button" onclick="googleSignIn()" class="w-full py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium flex items-center justify-center gap-2 mb-2">
+                <i class="fa-brands fa-google text-rose-500"></i> Google 계정으로 로그인
+            </button>
+            <div id="admin-login-status" class="text-xs text-rose-500 mb-2 h-4"></div>
+            <button type="button" onclick="closeAdminLoginModal()" class="w-full py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium mb-2">취소</button>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeNoteModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
+            <h3 id="note-modal-title" class="font-bold text-slate-800 mb-2">메모</h3>
+            <textarea id="note-modal-textarea" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
+            <div id="note-modal-status" class="text-xs text-slate-400 mt-1 h-4"></div>
+            <div class="flex gap-2 mt-3 pb-2">
+                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">닫기</button>
+                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -670,5 +847,10 @@
             activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
         }
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="../assets/firebase-config.js"></script>
+    <script src="../assets/notes.js"></script>
 </body>
 </html>
