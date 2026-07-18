@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>상후 님의 고베-아리마 가족여행</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+        .timeline-item:last-child .timeline-line::before {
+            display: none;
+        }
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #4f46e5;
+            background-color: #e0e7ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .map-btn:hover {
+            background-color: #c7d2fe;
+        }
+        .map-btn i {
+            margin-right: 3px;
+        }
+        .info-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+        .info-card-header {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+        .info-card-header i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .data-row {
+            display: flex;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .data-label {
+            width: 80px;
+            color: #64748b;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        .data-value {
+            color: #334155;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+
+    <!-- Header -->
+    <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
+        <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1 mb-2"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+        <div class="flex justify-between items-center mb-2">
+            <h1 class="text-xl font-bold">상후 님의 가족여행 ✈️</h1>
+            <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">3박 4일</span>
+        </div>
+        <p class="text-sm text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> 고베 - 아리마 온천</p>
+        <p class="text-sm text-slate-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> 2026.07.26(일) - 07.29(수)</p>
+    </header>
+
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-sm sticky top-[132px] z-40">
+        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-slate-500 whitespace-nowrap px-2">
+            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-slate-900 border-b-2 border-slate-800 transition-colors">1일차</button>
+            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">2일차</button>
+            <button onclick="switchTab('day3')" id="tab-day3" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">3일차</button>
+            <button onclick="switchTab('day4')" id="tab-day4" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">4일차</button>
+            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">상세 정보</button>
+        </div>
+    </nav>
+
+
+    <!-- Main Content Area -->
+    <main class="p-4 max-w-lg mx-auto">
+
+
+        <!-- Day 1 -->
+        <div id="day1" class="tab-content active">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">1일차 (7/26, 일)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">~ 05:00</span>
+                        <h3 class="font-bold text-slate-800">인천공항 발렛파킹 인도</h3>
+                        <p class="text-sm text-slate-600 mt-1">M-Parking (B1층 A구역15)</p>
+                        <div class="mt-2 text-xs bg-slate-50 p-2 rounded text-slate-600">
+                            <strong>차량:</strong> X3 (192무5604) <br>
+                            <strong>예약번호:</strong> 358633720656
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">07:30 ~ 09:20</span>
+                        <h3 class="font-bold text-slate-800">인천 출발 → 간사이 도착</h3>
+                        <p class="text-sm text-slate-600 mt-1">피치항공 MM712 (약 1시간 50분)</p>
+                        <p class="text-xs text-sky-600 mt-1 font-medium">좌석: 21D, 21E, 21F</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bus"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">09:20 ~ 12:00</span>
+                        <h3 class="font-bold text-slate-800">고베 산노미야로 이동</h3>
+                        <p class="text-sm text-slate-600 mt-1">간사이 T2 승차장 → 산노미야 직행 리무진</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">12:30 ~ 13:30</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            점심: 스테이크랜드
+                            <a href="https://www.google.com/maps/search/?api=1&query=Steakland+Kobe" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1">고베 규 스테이크 런치</p>
+                        <p class="text-xs text-slate-500 mt-1">* 호텔에 짐 먼저 맡기고 이동</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">14:00 ~ 16:00</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            기타노 이진칸 거리
+                            <a href="https://www.google.com/maps/search/?api=1&query=Kitano+Ijinkan-gai" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Starbucks+Kobe+Kitano+Ijinkan" target="_blank" class="text-indigo-600 underline">스타벅스</a>, 풍향계의 집 등</p>
+                        <p class="text-xs text-rose-600 bg-rose-50 p-2 rounded mt-2"><i class="fa-solid fa-sun"></i> 오르막은 시티루프버스(260엔)나 택시 이용!</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">16:10 ~</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            호텔 몬토레 고베 체크인
+                            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Monterey+Kobe" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-beer-mug-empty"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">19:00 ~ 21:00</span>
+                        <h3 class="font-bold text-slate-800">저녁: 산노미야 이자카야</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Day 2 -->
+        <div id="day2" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">2일차 (7/27, 월)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-mug-saucer"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">08:30 ~ 09:30</span>
+                        <h3 class="font-bold text-slate-800">호텔 조식</h3>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-fish-fins"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">10:00 ~ 13:00</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            고베 스마 씨월드
+                            <a href="https://www.google.com/maps/search/?api=1&query=Kobe+Suma+Sea+World" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1">서일본 유일 범고래 쇼 & 돌고래 쇼 (우비 필참)</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">13:10 ~ 14:30</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            원조평양냉면본점
+                            <a href="https://www.google.com/maps/search/?api=1&query=%E5%85%83%E7%A5%96%E5%B9%B3%E5%A3%8C%E5%86%B7%E9%BA%BA%E6%9C%AC%E5%BA%97+Kobe" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-purple-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">15:00 ~ 18:00</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            산노미야 아케이드 쇼핑
+                            <a href="https://www.google.com/maps/search/?api=1&query=Sannomiya+Center+Gai" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kaldi+Coffee+Farm+Sannomiya" target="_blank" class="text-indigo-600 underline">칼디 커피팜</a>, 한큐백화점 등 실내 쇼핑</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-beer-mug-empty"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">18:00 ~ 20:30</span>
+                        <h3 class="font-bold text-slate-800">저녁 식사 & 호텔 복귀</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Day 3 -->
+        <div id="day3" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">3일차 (7/28, 화)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-suitcase-rolling"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">08:30 ~ 09:30</span>
+                        <h3 class="font-bold text-slate-800">조식 및 체크아웃</h3>
+                        <p class="text-sm text-slate-600 mt-1">프론트에 캐리어 보관</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">10:00 ~ 13:30</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            동물 왕국 & 호빵맨 박물관
+                            <a href="https://www.google.com/maps/search/?api=1&query=Kobe+Animal+Kingdom" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kobe+Anpanman+Childrens+Museum" target="_blank" class="text-indigo-600 underline">호빵맨 박물관</a>, umie MOSAIC 구경</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-sushi">🍣</i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">14:00 ~ 15:00</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            점심: 스시 (우오베이 등)
+                            <a href="https://www.google.com/maps/search/?api=1&query=Uobei+Sannomiya" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1">식사 후 호텔 짐 찾기(15:30)</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-hot-tub-person"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">16:45 ~ 18:30</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            라코떼 아리마 & 마을 산책
+                            <a href="https://www.google.com/maps/search/?api=1&query=Raconter+Arima" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1"><a href="https://www.google.com/maps/search/?api=1&query=Kin+no+Yu+Arima" target="_blank" class="text-indigo-600 underline">킨노유 무료족욕탕</a>, 탄산센베 구경</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bowl-rice"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">18:30 ~</span>
+                        <h3 class="font-bold text-slate-800">석식 (가이세키) & 온천욕</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Day 4 -->
+        <div id="day4" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">4일차 (7/29, 수)</h2>
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-water"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">06:00 ~ 09:30</span>
+                        <h3 class="font-bold text-slate-800">아침 온천 및 조식</h3>
+                        <p class="text-sm text-slate-600 mt-1">화식 뷔페 조식 후 09:30 체크아웃</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">10:00 ~ 12:00</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            아리마 완구 박물관
+                            <a href="https://www.google.com/maps/search/?api=1&query=Arima+Toys+and+Automata+Museum" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">13:30 ~ 15:30</span>
+                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                            이치란 라멘 & 막판 쇼핑
+                            <a href="https://www.google.com/maps/search/?api=1&query=Ichiran+Sannomiya" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-1">산노미야 복귀 후 점심 및 드럭스토어 쇼핑 완료하기 (T2 면세점 작음)</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="timeline-line"></div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-plane-arrival"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">19:40 ~ 21:35</span>
+                        <h3 class="font-bold text-slate-800">간사이 출발 → 인천 귀국</h3>
+                        <p class="text-sm text-slate-600 mt-1">피치항공 MM711</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="timeline-item relative z-10 mb-6">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-white flex items-center justify-center shadow z-10 shrink-0">
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                        <span class="text-xs font-bold text-slate-500 mb-1 block">22:00 ~</span>
+                        <h3 class="font-bold text-slate-800">차량 수령 및 귀가</h3>
+                        <p class="text-sm text-slate-600 mt-1">B1층 A구역15 (M-Parking 발렛)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Info Section (Replaced Checklist with Sheet Data) -->
+        <div id="info" class="tab-content">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">여행 상세 정보</h2>
+
+            <!-- 참고 링크 모음 -->
+            <div class="info-card">
+                <div class="info-card-header text-blue-500">
+                    <i class="fa-solid fa-link"></i> 참고 링크 및 예약 웹사이트
+                </div>
+                <ul class="text-sm text-slate-600 space-y-4">
+                    <li class="border-b border-slate-100 pb-3">
+                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-bed mr-1"></i> 숙소 예약 정보</div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>몬토레 고베</span>
+                            <a href="https://www.hotelmonterey.co.jp/kr/kobe/" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>라코떼 아리마</span>
+                            <a href="https://relohotels.com/list_of_hotels/raconter-arima/" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                    </li>
+                    <li class="border-b border-slate-100 pb-3">
+                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-ticket mr-1"></i> 관광지 정보 및 예매</div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>스마 씨월드 참고</span>
+                            <a href="https://cafe.naver.com/worldtravelcafe/1070900" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 카페 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>호빵맨 박물관</span>
+                            <a href="https://www.kobe-anpanman.jp/kr/#shop" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>동물왕국 팁/입장권</span>
+                            <a href="https://m.blog.naver.com/wuouw1/224266589561" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-bus-simple mr-1"></i> 교통편 참고 (블로그/카페)</div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>고베 - 간사이 비교</span>
+                            <a href="https://cafe.naver.com/20daelee/928131" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 카페 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>간사이공항 → 고베 버스</span>
+                            <a href="https://blog.naver.com/xmffutwl808/224258149172" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span>고베 → 아리마 버스</span>
+                            <a href="https://blog.naver.com/xmffutwl808/224264236555" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>고베 → 간사이공항 버스</span>
+                            <a href="https://blog.naver.com/bloomingjeju/224305910103" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+
+            <!-- 항공편 정보 -->
+            <div class="info-card">
+                <div class="info-card-header text-sky-600">
+                    <i class="fa-solid fa-plane"></i> 항공편 정보 (피치항공)
+                </div>
+                <div class="mb-3 border-b border-slate-100 pb-3">
+                    <p class="text-sm font-bold text-slate-700 mb-1">🛫 가는 편 (7/26 일)</p>
+                    <div class="data-row"><div class="data-label">MM712</div><div class="data-value">07:30 인천(T1) → 09:20 간사이(T2)</div></div>
+                    <div class="data-row"><div class="data-label">상후</div><div class="data-value">좌석 21D / 위탁수하물 1개</div></div>
+                    <div class="data-row"><div class="data-label">성은/하린</div><div class="data-value">좌석 21E / 좌석 21F</div></div>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-700 mb-1">🛬 오는 편 (7/29 수)</p>
+                    <div class="data-row"><div class="data-label">MM711</div><div class="data-value">19:40 간사이(T2) → 21:35 인천(T1)</div></div>
+                    <div class="data-row"><div class="data-label">상후</div><div class="data-value">좌석 22A / 위탁수하물 1개</div></div>
+                    <div class="data-row"><div class="data-label">성은/하린</div><div class="data-value">좌석 22B / 좌석 22C</div></div>
+                </div>
+            </div>
+
+
+            <!-- 발렛파킹 -->
+            <div class="info-card">
+                <div class="info-card-header text-slate-600">
+                    <i class="fa-solid fa-square-parking"></i> 인천공항 발렛파킹
+                </div>
+                <div class="data-row"><div class="data-label">업체명</div><div class="data-value">M-Parking (일반 주차대행)</div></div>
+                <div class="data-row"><div class="data-label">차량번호</div><div class="data-value font-bold">192무5604 (X3/X4)</div></div>
+                <div class="data-row"><div class="data-label">예약번호</div><div class="data-value font-mono">358633720656</div></div>
+                <div class="data-row"><div class="data-label">인도/수령</div><div class="data-value">인천공항 단기주차 B1층 A구역15</div></div>
+                <div class="data-row"><div class="data-label">인도시간</div><div class="data-value text-rose-600 font-medium">7/26 (일) 05:15</div></div>
+                <div class="data-row"><div class="data-label">고객센터</div><div class="data-value">032-743-0124</div></div>
+            </div>
+
+
+            <!-- 숙소 정보 -->
+            <div class="info-card">
+                <div class="info-card-header text-indigo-500">
+                    <i class="fa-solid fa-hotel"></i> 숙소 상세 정보
+                </div>
+                <div class="mb-3 border-b border-slate-100 pb-3">
+                    <p class="text-sm font-bold text-slate-700 mb-1">호텔 몬토레 고베 (1~2박)</p>
+                    <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN 15:00 / OUT 11:00</div></div>
+                    <div class="data-row"><div class="data-label">식사/시설</div><div class="data-value">이탈리안 조식 / 2층 사우나(온욕) 시설</div></div>
+                    <div class="data-row"><div class="data-label">연락처</div><div class="data-value">+81-78-392-7111</div></div>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-700 mb-1">라코떼 아리마 (3박)</p>
+                    <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN 15:00 / OUT 10:00</div></div>
+                    <div class="data-row"><div class="data-label">특징</div><div class="data-value">전 14실 소규모 료칸 (셔틀없음, 택시권장)</div></div>
+                    <div class="data-row"><div class="data-label">온천/식사</div><div class="data-value">공동욕장/노천탕 (가족탕 없음)<br>석식(가이세키) 및 조식(화식 뷔페) 포함</div></div>
+                    <div class="data-row"><div class="data-label">연락처</div><div class="data-value">078-903-4315</div></div>
+                </div>
+            </div>
+
+
+            <!-- 수하물 및 전략 -->
+            <div class="info-card">
+                <div class="info-card-header text-emerald-600">
+                    <i class="fa-solid fa-suitcase"></i> 이동 및 수하물 전략
+                </div>
+                <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
+                    <li><strong>수하물 원칙:</strong> 모든 캐리어를 항상 통틀어 이동 (분리하지 않음)</li>
+                    <li><strong>1일차 체크인:</strong> 짐 보관 후 일정 진행 → 이자카야 저녁 식사 후 <strong>레이트 체크인(21:00~) 사전 고지 필수</strong></li>
+                    <li><strong>3일차 짐 보관:</strong> 호빵맨 박물관 일정 중 코인 로커 미사용. 체크아웃 후 프론트에 무료 보관 후 점심 식사 이후 수령</li>
+                    <li><strong>폭염 대응 (매우 중요):</strong> 7월 하순 최고 기온 34~36℃. <strong>10분 이상 도보는 택시/버스로 무조건 대체</strong></li>
+                </ul>
+            </div>
+
+
+            <!-- 관광지 상세 정보 -->
+            <div class="info-card">
+                <div class="info-card-header text-rose-500">
+                    <i class="fa-solid fa-camera-retro"></i> 기타노 이진칸 주요 스팟
+                </div>
+                <ul class="text-sm text-slate-600 space-y-3">
+                    <li><strong>우로코노이에 (비늘의 집):</strong> 외벽이 천연석 비늘 모양. 정원의 '멧돼지 동상' 코를 만지면 행운이 온다는 속설이 있음.</li>
+                    <li><strong>야마테 8번관:</strong> 내부에 '새턴의 의자'가 있어 소원을 비는 스팟 (여자는 오른쪽, 남자는 왼쪽에 착석).</li>
+                    <li><strong>영국관:</strong> 명탐정 셜록 홈즈의 방 재현. 망토/모자 착용 후 인증샷 가능.</li>
+                    <li><strong>스타벅스 고베 기타노이진칸점:</strong> 1907년 지어진 미국인 소유 목조 저택 통째 매장. 개화기 레트로 감성 및 외관 인증샷 필수.</li>
+                </ul>
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+                el.classList.add('text-slate-500');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('text-slate-500');
+            activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+        }
+    </script>
+</body>
+</html>
