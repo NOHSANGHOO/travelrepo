@@ -6,6 +6,8 @@
        (일차를 늘리거나 줄이려면 nav의 tab-btn 버튼과 tab-content div를 함께 추가/삭제하세요)
     3. "상세 정보" 탭의 info-card 블록들을 여행에 맞게 채우거나 삭제합니다.
     4. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
+    5. <body data-trip-id="..."> 값을 3번에서 정한 여행 id와 동일하게 맞춥니다.
+       (일정 카드의 note-slot data-item-id는 이 여행 안에서만 고유하면 됩니다. 예: day1-1, day1-2 ...)
 -->
 <html lang="ko">
 <head>
@@ -77,7 +79,7 @@
         .data-value { color: #334155; flex-grow: 1; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-20" data-trip-id="새여행id">
 
     <!-- Header -->
     <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
@@ -119,6 +121,13 @@
                             <a href="https://www.google.com/maps/search/?api=1&query=" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>
                         </h3>
                         <p class="text-sm text-slate-600 mt-1">일정 설명</p>
+                        <!-- 메모 기능: 카드마다 이 블록을 추가하세요. data-item-id는 이 여행 안에서 고유해야 합니다. -->
+                        <div class="note-slot mt-2" data-item-id="day1-1" data-item-title="일정 제목">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,6 +140,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~</span>
                         <h3 class="font-bold text-slate-800">숙소 체크인</h3>
+                        <div class="note-slot mt-2" data-item-id="day1-2" data-item-title="숙소 체크인">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,6 +163,12 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
                         <span class="text-xs font-bold text-slate-500 mb-1 block">HH:MM ~ HH:MM</span>
                         <h3 class="font-bold text-slate-800">귀국</h3>
+                        <div class="note-slot mt-2" data-item-id="day2-1" data-item-title="귀국">
+                            <div class="note-display hidden text-xs bg-amber-50 text-amber-800 rounded-lg p-2 whitespace-pre-wrap break-words mb-1"></div>
+                            <button type="button" class="note-btn text-xs text-amber-600 font-medium inline-flex items-center gap-1" onclick="openNoteModal(this)">
+                                <i class="fa-regular fa-note-sticky"></i><span class="note-btn-label">메모</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -177,6 +198,20 @@
 
     </main>
 
+    <!-- Note Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
+    <div id="note-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeNoteModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
+            <h3 id="note-modal-title" class="font-bold text-slate-800 mb-2">메모</h3>
+            <textarea id="note-modal-textarea" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
+            <div id="note-modal-status" class="text-xs text-slate-400 mt-1 h-4"></div>
+            <div class="flex gap-2 mt-3 pb-2">
+                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -190,5 +225,7 @@
             activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
         }
     </script>
+    <script src="../assets/notes-config.js"></script>
+    <script src="../assets/notes.js"></script>
 </body>
 </html>
