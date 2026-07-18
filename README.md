@@ -11,16 +11,20 @@ assets/site.js           목록 페이지 렌더링/필터 로직
 assets/firebase-config.js   Firebase 프로젝트 연결 정보
 assets/auth.js           사이트 열람용 구글 로그인 게이트 + 로그인 상태/관리자 판별 (모든 페이지 공용)
 assets/notes.js          메모 모달 열기/저장/조회 로직 (모든 여행 상세 페이지 공용)
-trips/kobe-arima-2026.html   고베-아리마 여행 상세 페이지
+assets/itinerary.js      일정 카드 렌더링 + 추가/수정/삭제 로직 (모든 여행 상세 페이지 공용)
+trips/kobe-arima-2026.html      고베-아리마 여행 상세 페이지
+trips/kobe-arima-2026-data.js   고베-아리마 여행의 초기 일정 데이터 (Firestore 시드값)
 trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
+trips/TEMPLATE-data.js   새 여행의 초기 일정 데이터 템플릿
 .github/workflows/pages.yml  GitHub Pages 자동 배포 워크플로우
 ```
 
 ## 새 여행 추가하는 법
 
 1. `trips/TEMPLATE.html`을 `trips/새여행id.html`로 복사합니다.
-2. 헤더 문구, 일차 탭, 타임라인 카드, 상세 정보(항공편/숙소 등) 내용을 채웁니다.
-3. `assets/trips-data.js`의 `TRIPS` 배열에 새 여행 항목을 추가합니다.
+2. `trips/TEMPLATE-data.js`를 `trips/새여행id-data.js`로 복사하고, `새여행id.html` 맨 아래 `<script>` 태그의 파일명도 함께 바꿔줍니다.
+3. 헤더 문구, 일차 탭 개수, 상세 정보(항공편/숙소 등) 내용을 채웁니다. (일정 카드 자체는 HTML을 직접 안 건드려도 됩니다 — 아래 "일정 카드 추가/수정/삭제" 참고)
+4. `assets/trips-data.js`의 `TRIPS` 배열에 새 여행 항목을 추가합니다.
 
    ```js
    {
@@ -37,8 +41,8 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
    }
    ```
 
-4. `<body data-trip-id="...">` 값을 3번에서 정한 `id`와 동일하게 맞춥니다 (일정 메모가 여행별로 구분되어 저장되는 기준입니다).
-5. `main` 브랜치에 푸시하면 GitHub Pages가 자동으로 재배포합니다.
+5. `<body data-trip-id="...">` 값을 4번에서 정한 `id`와 동일하게 맞춥니다 (일정/메모가 여행별로 구분되어 저장되는 기준입니다).
+6. `main` 브랜치에 푸시하면 GitHub Pages가 자동으로 재배포합니다.
 
 목록 페이지는 오늘 날짜를 기준으로 각 여행을 예정(D-day) / 진행중 / 완료 상태로 자동 분류합니다.
 
@@ -85,11 +89,19 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
                             'hd3311@gmail.com'
                           ];
        }
+       match /itineraries/{tripId} {
+         allow read: if request.auth != null;
+         allow write: if request.auth != null
+                       && request.auth.token.email in [
+                            'setario87@gmail.com',
+                            'hd3311@gmail.com'
+                          ];
+       }
      }
    }
    ```
 
-   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용 — 실제 접근 제어는 여기서 이루어집니다.)
+   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용 — 실제 접근 제어는 여기서 이루어집니다. `notes`는 메모, `itineraries`는 일정 카드 데이터입니다.)
 
 4. 왼쪽 메뉴에서 **보안 → Authentication → 시작하기 → Sign-in method** 탭 → **Google** 사용 설정
 5. 같은 화면(Authentication) → **Settings 탭 → Authorized domains** → **도메인 추가** → `nohsanghoo.github.io` 입력하고 추가 (이 목록에 없는 도메인에서는 구글 로그인 팝업이 차단되어 실패합니다)
@@ -116,6 +128,16 @@ trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
 - `firebaseConfig`의 값들(apiKey 등)은 비밀값이 아니라 공개 식별자라서 사이트 코드에 그대로 있어도 안전합니다. 실제 쓰기 권한은 3번의 Firestore 규칙(허용 이메일 검사)이 서버 쪽에서 최종적으로 통제합니다.
 - 관리자 계정을 추가/변경하려면 `assets/auth.js`의 `ADMIN_EMAILS` 배열과 Firestore 규칙의 이메일 목록을 **둘 다** 같이 바꿔야 합니다 (하나만 바꾸면 어긋납니다).
 - 무료(Spark) 요금제 기준 하루 약 5만 회 읽기 / 2만 회 쓰기까지 무료라 가족 여행 메모 용도로는 충분합니다.
+
+## 일정 카드 추가/수정/삭제 (Firebase)
+
+각 일차 탭의 일정 카드도 메모와 같은 방식(Firestore, `itineraries` 컬렉션)으로 저장됩니다.
+
+- **읽기**: 로그인한 사람이면 누구나 볼 수 있습니다.
+- **쓰기**: 관리자 이메일(`setario87@gmail.com`, `hd3311@gmail.com`)로 로그인한 경우, 각 일차 탭 하단에 "카드 추가" 버튼이 보이고, 카드마다 편집(연필)/삭제(휴지통) 아이콘이 함께 보입니다.
+- 카드 추가/편집 시 입력하는 값: **종류**(아이콘·색상이 자동으로 정해지는 프리셋 — 항공/이동/차량/식사/숙소/관광/쇼핑/온천/술집/기타), **시간**, **제목**, **설명**(선택, URL 링크 자동 인식), **지도 검색어**(선택, 입력하면 카드에 "위치" 버튼이 생겨 구글 지도로 연결됩니다).
+- 관리자가 그 여행 페이지에 처음 로그인하면, `trips/여행id-data.js`에 있는 초기 데이터가 Firestore로 자동 저장되고, 이후부터는 Firestore 쪽 데이터가 화면에 표시되는 기준이 됩니다 (그 전까지 방문자에게는 초기 데이터가 그대로 보입니다).
+- 일차(1일차/2일차 등) 자체를 추가/삭제하는 기능은 아직 없습니다 — 일차를 늘리거나 줄이려면 HTML의 tab 버튼/`-items` div와 `-data.js`의 해당 키를 함께 수정해야 합니다.
 
 ## Google Analytics(GA4) 로그인 이벤트
 

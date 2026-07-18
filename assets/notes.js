@@ -44,6 +44,7 @@
             renderSlot(slot.dataset.itemId);
         });
     }
+    window.__renderNoteSlots = renderAllSlots;
 
     function startNotesListener() {
         if (listenerStarted || !TRIP_ID) return;
