@@ -49,13 +49,25 @@
         });
     }
 
+    function isUrl(str) {
+        return /^https?:\/\//i.test(String(str).trim());
+    }
+
+    function mapHref(value) {
+        const trimmed = String(value).trim();
+        return isUrl(trimmed) ? trimmed : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(trimmed)}`;
+    }
+
     function renderItemHtml(dayId, item) {
         const preset = presetByKey(item.presetKey);
-        const mapBtn = item.mapQuery
-            ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.mapQuery)}" target="_blank" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>`
-            : "";
-        const desc = item.desc ? `<p class="text-sm text-slate-600 mt-1">${linkify(item.desc)}</p>` : "";
         const admin = window.isAdmin && window.isAdmin();
+        let mapBtn = "";
+        if (item.mapQuery && item.mapQuery.trim()) {
+            mapBtn = `<a href="${escapeHtml(mapHref(item.mapQuery))}" target="_blank" rel="noopener" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>`;
+        } else if (admin) {
+            mapBtn = `<button type="button" onclick="editItem('${dayId}','${item.id}')" class="map-btn opacity-60 border border-dashed border-indigo-300"><i class="fa-solid fa-map-location-dot"></i>위치 추가</button>`;
+        }
+        const desc = item.desc ? `<p class="text-sm text-slate-600 mt-1">${linkify(item.desc)}</p>` : "";
         const actions = admin
             ? `<div class="flex gap-3 shrink-0">
                  <button type="button" onclick="editItem('${dayId}','${item.id}')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-pen text-xs"></i></button>
