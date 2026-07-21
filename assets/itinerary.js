@@ -7,15 +7,15 @@
 
     const ICON_PRESETS = [
         { key: "flight", label: "✈️ 항공", icon: "fa-solid fa-plane", color: "bg-sky-500" },
-        { key: "transport", label: "🚌 이동/교통", icon: "fa-solid fa-bus", color: "bg-indigo-500" },
-        { key: "car", label: "🚗 차량", icon: "fa-solid fa-car", color: "bg-slate-700" },
+        { key: "transport", label: "🚌 이동/교통", icon: "fa-solid fa-bus", color: "bg-teal-500" },
+        { key: "car", label: "🚗 차량", icon: "fa-solid fa-car", color: "bg-stone-700" },
         { key: "food", label: "🍽️ 식사", icon: "fa-solid fa-utensils", color: "bg-rose-500" },
-        { key: "hotel", label: "🛏️ 숙소", icon: "fa-solid fa-bed", color: "bg-slate-700" },
+        { key: "hotel", label: "🛏️ 숙소", icon: "fa-solid fa-bed", color: "bg-stone-700" },
         { key: "sight", label: "📸 관광/체험", icon: "fa-solid fa-camera", color: "bg-emerald-500" },
         { key: "shopping", label: "🛍️ 쇼핑", icon: "fa-solid fa-bag-shopping", color: "bg-purple-500" },
         { key: "onsen", label: "♨️ 온천/휴식", icon: "fa-solid fa-hot-tub-person", color: "bg-amber-600" },
         { key: "drink", label: "🍺 술집/야식", icon: "fa-solid fa-beer-mug-empty", color: "bg-orange-500" },
-        { key: "etc", label: "📌 기타", icon: "fa-solid fa-location-dot", color: "bg-slate-500" }
+        { key: "etc", label: "📌 기타", icon: "fa-solid fa-location-dot", color: "bg-stone-500" }
     ];
 
     function presetByKey(key) {
@@ -35,7 +35,7 @@
         const escaped = escapeHtml(str);
         const urlRegex = /(https?:\/\/[^\s<]+)/g;
         return escaped
-            .replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener" class="underline text-indigo-700 break-all">${url}</a>`)
+            .replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener" class="underline text-teal-700 break-all">${url}</a>`)
             .replace(/\n/g, "<br>");
     }
 
@@ -65,13 +65,13 @@
         if (item.mapQuery && item.mapQuery.trim()) {
             mapBtn = `<a href="${escapeHtml(mapHref(item.mapQuery))}" target="_blank" rel="noopener" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>위치</a>`;
         } else if (admin) {
-            mapBtn = `<button type="button" onclick="editItem('${dayId}','${item.id}')" class="map-btn opacity-60 border border-dashed border-indigo-300"><i class="fa-solid fa-map-location-dot"></i>위치 추가</button>`;
+            mapBtn = `<button type="button" onclick="editItem('${dayId}','${item.id}')" class="map-btn opacity-60 border border-dashed border-teal-300"><i class="fa-solid fa-map-location-dot"></i>위치 추가</button>`;
         }
-        const desc = item.desc ? `<p class="text-sm text-slate-600 mt-1">${linkify(item.desc)}</p>` : "";
+        const desc = item.desc ? `<p class="text-sm text-stone-600 mt-1">${linkify(item.desc)}</p>` : "";
         const actions = admin
             ? `<div class="flex gap-3 shrink-0">
-                 <button type="button" onclick="editItem('${dayId}','${item.id}')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-pen text-xs"></i></button>
-                 <button type="button" onclick="deleteItem('${dayId}','${item.id}')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
+                 <button type="button" onclick="editItem('${dayId}','${item.id}')" class="text-stone-400 hover:text-stone-700"><i class="fa-solid fa-pen text-xs"></i></button>
+                 <button type="button" onclick="deleteItem('${dayId}','${item.id}')" class="text-stone-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
                </div>`
             : "";
         return `
@@ -81,12 +81,12 @@
                     <div class="w-10 h-10 rounded-full ${preset.color} text-white flex items-center justify-center shadow z-10 shrink-0">
                         <i class="${preset.icon}"></i>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex-1">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm shadow-stone-200/40 border border-stone-100 flex-1">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="text-xs font-bold text-slate-500 mb-1 block">${escapeHtml(item.time || "")}</span>
+                            <span class="text-xs font-bold text-stone-500 mb-1 block">${escapeHtml(item.time || "")}</span>
                             ${actions}
                         </div>
-                        <h3 class="font-bold text-slate-800 flex items-center flex-wrap gap-y-1">
+                        <h3 class="font-bold text-stone-800 flex items-center flex-wrap gap-y-1">
                             ${escapeHtml(item.title || "")}
                             ${mapBtn}
                         </h3>

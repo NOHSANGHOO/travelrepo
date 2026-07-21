@@ -26,7 +26,7 @@
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #faf7f2;
             -webkit-tap-highlight-color: transparent;
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -52,83 +52,83 @@
             display: inline-flex;
             align-items: center;
             font-size: 0.7rem;
-            color: #4f46e5;
-            background-color: #e0e7ff;
+            color: #0d9488;
+            background-color: #ccfbf1;
             padding: 2px 6px;
             border-radius: 4px;
             margin-left: 6px;
             text-decoration: none;
             transition: background-color 0.2s;
         }
-        .map-btn:hover { background-color: #c7d2fe; }
+        .map-btn:hover { background-color: #99f6e4; }
         .map-btn i { margin-right: 3px; }
         .info-card {
             background: white;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             padding: 1.25rem;
             margin-bottom: 1rem;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
+            border: 1px solid #f5f5f4;
         }
         .info-card-header {
             font-weight: 700;
-            color: #1e293b;
+            color: #292524;
             margin-bottom: 0.75rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e7e5e4;
             display: flex;
             align-items: center;
         }
         .info-card-header i { margin-right: 0.5rem; font-size: 1.1rem; }
         .data-row { display: flex; margin-bottom: 0.5rem; font-size: 0.875rem; }
-        .data-label { width: 80px; color: #64748b; font-weight: 500; flex-shrink: 0; }
-        .data-value { color: #334155; flex-grow: 1; }
+        .data-label { width: 80px; color: #78716c; font-weight: 500; flex-shrink: 0; }
+        .data-value { color: #44403c; flex-grow: 1; }
     </style>
 </head>
 <body class="pb-20" data-trip-id="새여행id">
 
-    <div id="access-gate" class="fixed inset-0 z-[100] bg-slate-800 flex items-center justify-center p-6">
+    <div id="access-gate" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
-            <i class="fa-solid fa-lock text-3xl text-slate-400 mb-3"></i>
-            <h2 class="font-bold text-slate-800 mb-1">로그인이 필요합니다</h2>
-            <p class="text-xs text-slate-500 mb-4">여행 계획을 보려면 구글 계정으로 로그인하세요</p>
-            <button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium flex items-center justify-center gap-2">
+            <i class="fa-solid fa-lock text-3xl text-stone-400 mb-3"></i>
+            <h2 class="font-bold text-stone-800 mb-1">로그인이 필요합니다</h2>
+            <p class="text-xs text-stone-500 mb-4">여행 계획을 보려면 구글 계정으로 로그인하세요</p>
+            <button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-lg border border-stone-200 text-stone-700 text-sm font-medium flex items-center justify-center gap-2">
                 <i class="fa-brands fa-google text-rose-500"></i> Google 계정으로 로그인
             </button>
             <p id="access-gate-error" class="text-xs text-rose-500 mt-2 h-4"></p>
         </div>
     </div>
 
-    <div id="trip-lock" class="fixed inset-0 z-[90] bg-slate-800 flex items-center justify-center p-6" style="display:none;">
+    <div id="trip-lock" class="fixed inset-0 z-[90] bg-stone-900 flex items-center justify-center p-6" style="display:none;">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
-            <i class="fa-solid fa-hourglass-half text-3xl text-slate-400 mb-3"></i>
-            <h2 class="font-bold text-slate-800 mb-1">아직 공개 전인 여행이에요</h2>
-            <p class="text-xs text-slate-500">여행이 끝나면 누구나 볼 수 있어요.<br>지금은 관리자만 확인할 수 있습니다.</p>
+            <i class="fa-solid fa-hourglass-half text-3xl text-stone-400 mb-3"></i>
+            <h2 class="font-bold text-stone-800 mb-1">아직 공개 전인 여행이에요</h2>
+            <p class="text-xs text-stone-500">여행이 끝나면 누구나 볼 수 있어요.<br>지금은 관리자만 확인할 수 있습니다.</p>
         </div>
     </div>
 
     <!-- Header -->
-    <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
+    <header class="bg-stone-900 text-white p-5 sticky top-0 z-50 shadow-md">
         <div class="flex justify-between items-center mb-2">
-            <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
-            <button type="button" onclick="toggleLogin()" class="text-slate-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요">
+            <a href="../index.html" class="text-stone-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+            <button type="button" onclick="toggleLogin()" class="text-stone-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요">
                 <i id="admin-login-icon" class="fa-solid fa-lock"></i>
             </button>
         </div>
         <div class="flex justify-between items-center mb-2">
             <h1 class="text-xl font-bold">OOO 님의 OOO 여행 ✈️</h1>
-            <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">N박 N일</span>
+            <span class="text-xs bg-white/10 px-2 py-1 rounded-full text-stone-100">N박 N일</span>
         </div>
-        <p class="text-sm text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> 여행지</p>
-        <p class="text-sm text-slate-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> YYYY.MM.DD(요일) - MM.DD(요일)</p>
+        <p class="text-sm text-stone-300"><i class="fa-solid fa-location-dot mr-1"></i> 여행지</p>
+        <p class="text-sm text-stone-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> YYYY.MM.DD(요일) - MM.DD(요일)</p>
     </header>
 
     <!-- Navigation Tabs -->
     <nav class="bg-white shadow-sm sticky top-[132px] z-40">
-        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-slate-500 whitespace-nowrap px-2">
-            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-slate-900 border-b-2 border-slate-800 transition-colors">1일차</button>
-            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">2일차</button>
-            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">상세 정보</button>
+        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-stone-500 whitespace-nowrap px-2">
+            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-stone-900 border-b-2 border-teal-600 transition-colors">1일차</button>
+            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">2일차</button>
+            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">상세 정보</button>
         </div>
     </nav>
 
@@ -137,25 +137,25 @@
 
         <!-- Day 1 -->
         <div id="day1" class="tab-content active">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">1일차 (MM/DD, 요일)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">1일차 (MM/DD, 요일)</h2>
             <div id="day1-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day1')">
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day1')">
                 <i class="fa-solid fa-plus mr-1"></i> 카드 추가
             </button>
         </div>
 
         <!-- Day 2 -->
         <div id="day2" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">2일차 (MM/DD, 요일)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">2일차 (MM/DD, 요일)</h2>
             <div id="day2-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day2')">
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day2')">
                 <i class="fa-solid fa-plus mr-1"></i> 카드 추가
             </button>
         </div>
 
         <!-- Info -->
         <div id="info" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">여행 상세 정보</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">여행 상세 정보</h2>
 
             <div class="info-card">
                 <div class="info-card-header text-sky-600">
@@ -166,7 +166,7 @@
             </div>
 
             <div class="info-card">
-                <div class="info-card-header text-indigo-500">
+                <div class="info-card-header text-teal-500">
                     <i class="fa-solid fa-hotel"></i> 숙소 정보
                 </div>
                 <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN / OUT</div></div>
@@ -180,13 +180,13 @@
     <!-- Note Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
     <div id="note-modal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeNoteModal()"></div>
-        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
-            <h3 id="note-modal-title" class="font-bold text-slate-800 mb-2">메모</h3>
-            <textarea id="note-modal-textarea" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
-            <div id="note-modal-status" class="text-xs text-slate-400 mt-1 h-4"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto">
+            <h3 id="note-modal-title" class="font-bold text-stone-800 mb-2">메모</h3>
+            <textarea id="note-modal-textarea" class="w-full border border-stone-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
+            <div id="note-modal-status" class="text-xs text-stone-400 mt-1 h-4"></div>
             <div class="flex gap-2 mt-3 pb-2">
-                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">닫기</button>
-                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">닫기</button>
+                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
             </div>
         </div>
     </div>
@@ -194,23 +194,23 @@
     <!-- Item Add/Edit Modal (메모 기능: 모든 여행 페이지에 그대로 유지하세요) -->
     <div id="item-modal" class="fixed inset-0 z-[65] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeItemModal()"></div>
-        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
-            <h3 id="item-modal-title" class="font-bold text-slate-800 mb-3">카드 추가</h3>
-            <label class="text-xs text-slate-500 font-medium">종류</label>
-            <select id="item-modal-preset" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2"></select>
-            <label class="text-xs text-slate-500 font-medium">시간</label>
-            <input id="item-modal-time" type="text" placeholder="예: 09:00 ~ 10:30" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
-            <label class="text-xs text-slate-500 font-medium">제목</label>
-            <input id="item-modal-title-input" type="text" placeholder="일정 제목" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
-            <label class="text-xs text-slate-500 font-medium">설명 (선택)</label>
-            <textarea id="item-modal-desc" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-20 mb-2" placeholder="세부 설명, URL 링크도 가능"></textarea>
-            <label class="text-xs text-slate-500 font-medium">장소 링크 (선택)</label>
-            <input id="item-modal-map" type="text" placeholder="장소명 입력 → 구글지도 검색 / URL 붙여넣기 → 그 링크로 연결" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
+            <h3 id="item-modal-title" class="font-bold text-stone-800 mb-3">카드 추가</h3>
+            <label class="text-xs text-stone-500 font-medium">종류</label>
+            <select id="item-modal-preset" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2"></select>
+            <label class="text-xs text-stone-500 font-medium">시간</label>
+            <input id="item-modal-time" type="text" placeholder="예: 09:00 ~ 10:30" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-stone-500 font-medium">제목</label>
+            <input id="item-modal-title-input" type="text" placeholder="일정 제목" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-stone-500 font-medium">설명 (선택)</label>
+            <textarea id="item-modal-desc" class="w-full border border-stone-200 rounded-lg p-2 text-sm h-20 mb-2" placeholder="세부 설명, URL 링크도 가능"></textarea>
+            <label class="text-xs text-stone-500 font-medium">장소 링크 (선택)</label>
+            <input id="item-modal-map" type="text" placeholder="장소명 입력 → 구글지도 검색 / URL 붙여넣기 → 그 링크로 연결" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
             <div id="item-modal-status" class="text-xs text-rose-500 mb-2 h-4"></div>
             <div class="flex gap-2 pb-2">
                 <button type="button" id="item-modal-delete" onclick="deleteItemFromModal()" class="hidden px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
-                <button type="button" onclick="closeItemModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
-                <button type="button" onclick="saveItem()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+                <button type="button" onclick="closeItemModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveItem()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
             </div>
         </div>
     </div>
@@ -219,13 +219,13 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
-                el.classList.add('text-slate-500');
+                el.classList.remove('active', 'text-stone-900', 'border-b-2', 'border-teal-600');
+                el.classList.add('text-stone-500');
             });
             document.getElementById(tabId).classList.add('active');
             const activeBtn = document.getElementById('tab-' + tabId);
-            activeBtn.classList.remove('text-slate-500');
-            activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+            activeBtn.classList.remove('text-stone-500');
+            activeBtn.classList.add('active', 'text-stone-900', 'border-b-2', 'border-teal-600');
         }
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
