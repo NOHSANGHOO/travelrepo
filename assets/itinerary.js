@@ -390,7 +390,15 @@
             });
     };
 
-    // ---- Hooks for CSV import/export (trip-io.js) ----
+    // ---- Hooks for trip-page.js / trip-io.js ----
+    window.__renderItinerary = renderAllDays;
+    window.__deleteItineraryDay = function (dayId) {
+        if (!itineraryData[dayId]) return Promise.resolve();
+        const next = Object.assign({}, itineraryData);
+        delete next[dayId];
+        itineraryData = next;
+        return firebase.firestore().collection("itineraries").doc(TRIP_ID).set(next);
+    };
     window.__itineraryApi = {
         getDayIds: getDayIds,
         getData: function () {

@@ -1,35 +1,25 @@
 (function () {
-    const TRIP_ID = document.body.dataset.tripId;
-
-    function getTrip() {
-        if (typeof TRIPS === "undefined") return null;
-        return (
-            TRIPS.find(function (t) {
-                return t.id === TRIP_ID;
-            }) || null
-        );
-    }
-
     function isTripOver(trip) {
-        if (!trip || !trip.endDate) return true;
+        if (!trip || !trip.endDate) return false; // meta not loaded yet → treat as not-over (admin-gated below)
         const end = new Date(trip.endDate + "T23:59:59");
         return new Date() > end;
     }
 
-    function applyVisibility() {
+    window.__applyTripVisibility = function () {
         const overlay = document.getElementById("trip-lock");
         if (!overlay) return;
-        const trip = getTrip();
+        const trip = window.__tripMeta || null;
         const admin = window.isAdmin && window.isAdmin();
-        const allowed = admin || isTripOver(trip);
+        // Until meta loads, keep locked for non-admins to avoid flashing private content.
+        const allowed = admin || (trip && isTripOver(trip));
         overlay.style.display = allowed ? "none" : "";
         document.body.style.overflow = allowed ? "" : "hidden";
-    }
+    };
 
     document.addEventListener("DOMContentLoaded", function () {
         if (typeof window.onAuthChange !== "function") return;
-        window.onAuthChange(function (user) {
-            if (user) applyVisibility();
+        window.onAuthChange(function () {
+            window.__applyTripVisibility();
         });
     });
 })();
