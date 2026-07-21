@@ -2,17 +2,18 @@
 <!--
     새 여행 추가 방법
     1. 이 파일을 trips/새여행id.html 로 복사합니다. (예: trips/jeju-2027.html)
-    2. trips/TEMPLATE-data.js 를 trips/새여행id-data.js 로 복사하고, 이 파일 맨 아래
-       <script> 태그의 파일명도 함께 바꿔줍니다.
+    2. trips/TEMPLATE-data.js 를 trips/새여행id-data.js 로,
+       trips/TEMPLATE-info.js 를 trips/새여행id-info.js 로 복사하고,
+       이 파일 맨 아래 <script> 태그의 두 파일명도 함께 바꿔줍니다.
     3. <title>, 헤더 문구, 일차 탭 개수를 여행에 맞게 수정합니다.
        (일차를 늘리거나 줄이려면 nav의 tab-btn 버튼과 <main>의 tab-content/"-items" div,
        그리고 새여행id-data.js 의 DEFAULT_ITINERARY 키를 함께 추가/삭제하세요)
-    4. 일정 카드 자체는 HTML을 직접 건드릴 필요 없이, 배포 후 사이트에서 관리자로 로그인해
-       각 일차 탭 하단의 "카드 추가" 버튼과 카드별 편집/삭제 아이콘으로 추가·수정·삭제합니다.
-       new-data.js의 DEFAULT_ITINERARY는 그 전까지 보여줄 초기값일 뿐입니다.
-    5. "상세 정보" 탭의 info-card 블록들을 여행에 맞게 채우거나 삭제합니다.
-    6. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
-    7. <body data-trip-id="..."> 값을 6번에서 정한 여행 id와 동일하게 맞춥니다.
+    4. 일정 카드와 "상세 정보" 카드는 HTML을 직접 건드릴 필요 없이, 배포 후 사이트에서
+       관리자로 로그인해 각 탭의 "일정카드 추가"/"정보 카드 추가" 버튼과 편집/삭제 아이콘으로
+       추가·수정·삭제하고, 일정카드는 드래그로 순서도 바꿀 수 있습니다.
+       -data.js / -info.js 의 기본값은 Firestore에 데이터가 없을 때 보여줄 초기값일 뿐입니다.
+    5. assets/trips-data.js 의 TRIPS 배열에 새 여행 정보를 추가합니다.
+    6. <body data-trip-id="..."> 값을 5번에서 정한 여행 id와 동일하게 맞춥니다.
 -->
 
 <html lang="ko">
@@ -162,26 +163,13 @@
             </button>
         </div>
 
-        <!-- Info -->
+        <!-- Info (Firestore-backed, editable) -->
         <div id="info" class="tab-content">
             <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">여행 상세 정보</h2>
-
-            <div class="info-card">
-                <div class="info-card-header text-sky-600">
-                    <i class="fa-solid fa-plane"></i> 항공편 정보
-                </div>
-                <div class="data-row"><div class="data-label">편명</div><div class="data-value">내용</div></div>
-                <div class="data-row"><div class="data-label">좌석</div><div class="data-value">내용</div></div>
-            </div>
-
-            <div class="info-card">
-                <div class="info-card-header text-teal-500">
-                    <i class="fa-solid fa-hotel"></i> 숙소 정보
-                </div>
-                <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN / OUT</div></div>
-                <div class="data-row"><div class="data-label">연락처</div><div class="data-value">내용</div></div>
-            </div>
-
+            <div id="info-sections"></div>
+            <button type="button" id="info-add-btn" class="hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-1" onclick="openAddInfoSection()">
+                <i class="fa-solid fa-plus mr-1"></i> 정보 카드 추가
+            </button>
         </div>
 
     </main>
@@ -224,6 +212,27 @@
         </div>
     </div>
 
+    <!-- Info Section Add/Edit Modal -->
+    <div id="info-modal" class="fixed inset-0 z-[65] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeInfoModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
+            <h3 id="info-modal-heading" class="font-bold text-stone-800 mb-3">정보 카드 추가</h3>
+            <label class="text-xs text-stone-500 font-medium">아이콘</label>
+            <select id="info-modal-icon" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2"></select>
+            <label class="text-xs text-stone-500 font-medium">제목</label>
+            <input id="info-modal-title-input" type="text" placeholder="카드 제목 (예: 항공편 정보)" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-3">
+            <label class="text-xs text-stone-500 font-medium">내용 (항목은 비워두면 불릿 줄로 표시됩니다)</label>
+            <div id="info-modal-rows" class="mt-1"></div>
+            <button type="button" onclick="addInfoRow()" class="text-xs text-teal-700 font-medium mb-2"><i class="fa-solid fa-plus mr-1"></i> 행 추가</button>
+            <div id="info-modal-status" class="text-xs text-rose-500 mb-2 h-4"></div>
+            <div class="flex gap-2 pb-2">
+                <button type="button" id="info-modal-delete" onclick="deleteInfoSection()" class="hidden px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="closeInfoModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveInfoSection()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -249,5 +258,7 @@
     <script src="TEMPLATE-data.js"></script>
     <script src="../assets/itinerary.js"></script>
     <script src="../assets/trip-io.js"></script>
+    <script src="TEMPLATE-info.js"></script>
+    <script src="../assets/tripinfo.js"></script>
 </body>
 </html>
