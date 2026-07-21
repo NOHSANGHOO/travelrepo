@@ -19,6 +19,12 @@ function formatDateRange(trip) {
     return `${trip.startDate.slice(0, 4)}.${fmt(trip.startDate)} - ${fmt(trip.endDate)}`;
 }
 
+function canViewTrip(trip) {
+    if (window.isAdmin && window.isAdmin()) return true;
+    const end = new Date(trip.endDate + "T23:59:59");
+    return new Date() > end;
+}
+
 function renderTrips(filterKey) {
     const container = document.getElementById("trip-list");
     const empty = document.getElementById("empty-state");
@@ -36,13 +42,19 @@ function renderTrips(filterKey) {
     empty.classList.add("hidden");
 
     filtered.forEach(({ trip, status }) => {
-        const card = document.createElement("a");
-        card.href = trip.url;
-        card.className = "block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow";
+        const viewable = canViewTrip(trip);
+        const card = document.createElement(viewable ? "a" : "div");
+        if (viewable) card.href = trip.url;
+        card.className = viewable
+            ? "block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
+            : "block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden opacity-70 cursor-not-allowed";
+        const badge = viewable
+            ? `<span class="text-xs font-bold px-2 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">${trip.duration}</span>`
+            : `<span class="text-xs font-bold px-2 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm"><i class="fa-solid fa-lock mr-1"></i>비공개</span>`;
         card.innerHTML = `
             <div class="h-24 bg-gradient-to-r ${trip.gradient} flex items-center justify-between px-5">
                 <i class="${trip.icon} text-white text-3xl opacity-90"></i>
-                <span class="text-xs font-bold px-2 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">${trip.duration}</span>
+                ${badge}
             </div>
             <div class="p-4">
                 <div class="flex justify-between items-start gap-2 mb-1">
@@ -54,13 +66,17 @@ function renderTrips(filterKey) {
                     <span><i class="fa-solid fa-location-dot mr-1"></i>${trip.location}</span>
                     <span><i class="fa-regular fa-calendar mr-1"></i>${formatDateRange(trip)}</span>
                 </div>
+                ${viewable ? "" : `<p class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-hourglass-half mr-1"></i>여행이 끝나면 볼 수 있어요</p>`}
             </div>
         `;
         container.appendChild(card);
     });
 }
 
+let currentFilter = "all";
+
 function switchFilter(key) {
+    currentFilter = key;
     document.querySelectorAll(".filter-btn").forEach((btn) => {
         const active = btn.dataset.filter === key;
         btn.classList.toggle("bg-slate-800", active);
@@ -71,4 +87,11 @@ function switchFilter(key) {
     renderTrips(key);
 }
 
-document.addEventListener("DOMContentLoaded", () => switchFilter("all"));
+document.addEventListener("DOMContentLoaded", () => {
+    switchFilter("all");
+    if (typeof window.onAuthChange === "function") {
+        window.onAuthChange(function () {
+            renderTrips(currentFilter);
+        });
+    }
+});
