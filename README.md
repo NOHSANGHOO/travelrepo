@@ -1,53 +1,38 @@
 # travelrepo
 
-가족 여행 일정을 모아보는 정적 웹사이트입니다. 여러 개의 여행을 목록에서 탐색하고, 각 여행의 일자별 일정과 상세 정보를 확인할 수 있습니다. 일정 카드마다 메모를 남길 수 있고, 사이트 열람에는 구글 로그인이 필요합니다.
+가족 여행 일정을 모아보는 정적 웹사이트입니다. 여러 개의 여행을 목록에서 탐색하고, 각 여행의 일자별 일정과 상세 정보를 확인할 수 있습니다. **여행 목록·일정·상세정보·메모가 모두 Firebase(Firestore)에서 읽어와 표시**되며, 관리자는 화면에서 직접 여행을 만들고 편집합니다. 사이트 열람에는 구글 로그인이 필요합니다.
 
-## 구조
+## 구조 (Firebase-driven)
+
+여행 하나당 HTML 파일을 두지 않습니다. **범용 상세 페이지 `trip.html?id=여행id` 하나**가 URL의 id로 해당 여행 데이터를 Firestore에서 읽어 화면을 동적으로 구성합니다.
 
 ```
-index.html               여행 목록(첫 화면)
-assets/trips-data.js     여행 목록에 표시되는 메타데이터 (제목, 기간, 링크 등)
-assets/site.js           목록 페이지 렌더링/필터 로직
+index.html               여행 목록(첫 화면) — Firestore `trips` 컬렉션을 읽어 렌더링
+trip.html                범용 여행 상세 페이지 (?id=여행id 로 어떤 여행이든 표시)
+assets/trips-data.js     여행 목록 기본(시드) 데이터 (Firestore가 비었을 때만 사용)
+assets/trips-store.js    Firestore `trips` 컬렉션 구독/생성/수정/삭제 + 시딩 (공용)
+assets/site.js           목록 페이지 렌더링/필터 + "새 여행 만들기"
+assets/trip-page.js      trip.html 오케스트레이터 (메타→헤더/탭/일차 구성, 여행정보/일차 편집)
 assets/firebase-config.js   Firebase 프로젝트 연결 정보
-assets/auth.js           사이트 열람용 구글 로그인 게이트 + 로그인 상태/관리자 판별 (모든 페이지 공용)
-assets/notes.js          메모 모달 열기/저장/조회 로직 (모든 여행 상세 페이지 공용)
+assets/auth.js           구글 로그인 게이트 + 로그인 상태/관리자 판별 (공용)
+assets/notes.js          일정 카드 메모 (공용)
 assets/itinerary.js      일정 카드 렌더링 + 추가/수정/삭제 + 드래그 순서변경 + 하루 동선 지도 (공용)
-assets/tripinfo.js       "상세 정보" 탭 섹션 렌더링 + 추가/수정/삭제 로직 (공용)
+assets/tripinfo.js       "상세 정보" 탭 섹션 추가/수정/삭제 (공용)
 assets/trip-io.js        여행 일정 CSV 내보내기 / 양식 / 가져오기 (공용)
 assets/trip-visibility.js   여행 종료 전에는 관리자만 상세 페이지 열람 가능하도록 제한 (공용)
-trips/kobe-arima-2026.html      고베-아리마 여행 상세 페이지
-trips/kobe-arima-2026-data.js   고베-아리마 초기 일정 데이터 (Firestore 시드값)
-trips/kobe-arima-2026-info.js   고베-아리마 초기 상세정보 데이터 (Firestore 시드값)
-trips/TEMPLATE.html      새 여행 추가 시 복사해서 쓰는 템플릿
-trips/TEMPLATE-data.js   새 여행의 초기 일정 데이터 템플릿
-trips/TEMPLATE-info.js   새 여행의 초기 상세정보 데이터 템플릿
+trips/kobe-arima-2026.html  (레거시) 기존 주소를 trip.html?id=kobe-arima-2026 으로 자동 이동
 .github/workflows/pages.yml  GitHub Pages 자동 배포 워크플로우
 ```
 
-## 새 여행 추가하는 법
+Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드), `tripinfo`(상세 정보 탭), `notes`(메모). 모두 문서 id = 여행 id.
 
-1. `trips/TEMPLATE.html`을 `trips/새여행id.html`로 복사합니다.
-2. `trips/TEMPLATE-data.js`를 `trips/새여행id-data.js`로 복사하고, `새여행id.html` 맨 아래 `<script>` 태그의 파일명도 함께 바꿔줍니다.
-3. 헤더 문구, 일차 탭 개수, 상세 정보(항공편/숙소 등) 내용을 채웁니다. (일정 카드 자체는 HTML을 직접 안 건드려도 됩니다 — 아래 "일정 카드 추가/수정/삭제" 참고)
-4. `assets/trips-data.js`의 `TRIPS` 배열에 새 여행 항목을 추가합니다.
+## 새 여행 추가하는 법 (파일 불필요)
 
-   ```js
-   {
-       id: "jeju-2027",
-       title: "제주",
-       subtitle: "가족 여행",
-       location: "대한민국 제주",
-       startDate: "2027-01-10",
-       endDate: "2027-01-13",
-       duration: "2박 3일",
-       icon: "fa-solid fa-umbrella-beach",
-       gradient: "from-emerald-500 to-teal-500",
-       url: "trips/jeju-2027.html"
-   }
-   ```
+1. 사이트 목록 화면에서 관리자로 로그인하면 상단에 **"새 여행 만들기"** 버튼이 보입니다.
+2. 여행 이름·위치·시작일·종료일을 입력하면, 날짜에 맞춰 일차가 자동 생성되고 새 여행 페이지(`trip.html?id=...`)로 이동합니다.
+3. 그 페이지에서 각 일차의 **"일정카드 추가"**, **"정보 카드 추가"**로 내용을 채웁니다. 헤더 오른쪽 위 **톱니바퀴(⚙️)** 로 여행 제목/기간/일차(추가·삭제·이름변경)를 편집하고, 여행 전체를 삭제할 수도 있습니다.
 
-5. `<body data-trip-id="...">` 값을 4번에서 정한 `id`와 동일하게 맞춥니다 (일정/메모가 여행별로 구분되어 저장되는 기준입니다).
-6. `main` 브랜치에 푸시하면 GitHub Pages가 자동으로 재배포합니다.
+> 저장소에 새 HTML 파일을 만들 필요가 없습니다. 여행은 Firestore 문서로만 존재하므로, 만들고/편집하고/지우는 모든 것이 화면에서 즉시 반영됩니다. (`assets/trips-data.js`의 `DEFAULT_TRIPS`는 Firestore가 완전히 비어 있는 최초 상태에서만 보여주는 시드값입니다.)
 
 목록 페이지는 오늘 날짜를 기준으로 각 여행을 예정(D-day) / 진행중 / 완료 상태로 자동 분류합니다.
 
@@ -95,35 +80,34 @@ trips/TEMPLATE-info.js   새 여행의 초기 상세정보 데이터 템플릿
    rules_version = '2';
    service cloud.firestore {
      match /databases/{database}/documents {
+       function isAdmin() {
+         return request.auth != null
+             && request.auth.token.email in [
+                  'setario87@gmail.com',
+                  'hd3311@gmail.com'
+                ];
+       }
+       match /trips/{tripId} {
+         allow read: if request.auth != null;
+         allow write: if isAdmin();
+       }
        match /notes/{tripId} {
          allow read: if request.auth != null;
-         allow write: if request.auth != null
-                       && request.auth.token.email in [
-                            'setario87@gmail.com',
-                            'hd3311@gmail.com'
-                          ];
+         allow write: if isAdmin();
        }
        match /itineraries/{tripId} {
          allow read: if request.auth != null;
-         allow write: if request.auth != null
-                       && request.auth.token.email in [
-                            'setario87@gmail.com',
-                            'hd3311@gmail.com'
-                          ];
+         allow write: if isAdmin();
        }
        match /tripinfo/{tripId} {
          allow read: if request.auth != null;
-         allow write: if request.auth != null
-                       && request.auth.token.email in [
-                            'setario87@gmail.com',
-                            'hd3311@gmail.com'
-                          ];
+         allow write: if isAdmin();
        }
      }
    }
    ```
 
-   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용. `notes`는 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터입니다.)
+   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용. `trips`는 여행 목록/메타, `notes`는 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터입니다.)
 
 4. 왼쪽 메뉴에서 **보안 → Authentication → 시작하기 → Sign-in method** 탭 → **Google** 사용 설정
 5. 같은 화면(Authentication) → **Settings 탭 → Authorized domains** → **도메인 추가** → `nohsanghoo.github.io` 입력하고 추가 (이 목록에 없는 도메인에서는 구글 로그인 팝업이 차단되어 실패합니다)

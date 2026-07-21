@@ -89,6 +89,7 @@
         const addBtn = document.getElementById("info-add-btn");
         if (addBtn) addBtn.classList.toggle("hidden", !isAdmin());
     }
+    window.__renderTripInfo = renderInfo;
 
     function populateIconSelect() {
         const select = document.getElementById("info-modal-icon");
