@@ -15,6 +15,8 @@
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        button:not(:disabled) { transition: transform 0.08s ease; }
+        button:not(:disabled):active { transform: scale(0.96); }
     </style>
 </head>
 <body class="pb-20">
