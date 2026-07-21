@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #faf7f2;
             -webkit-tap-highlight-color: transparent;
         }
         .hide-scrollbar::-webkit-scrollbar {
@@ -48,8 +48,8 @@
             display: inline-flex;
             align-items: center;
             font-size: 0.7rem;
-            color: #4f46e5;
-            background-color: #e0e7ff;
+            color: #0d9488;
+            background-color: #ccfbf1;
             padding: 2px 6px;
             border-radius: 4px;
             margin-left: 6px;
@@ -57,25 +57,25 @@
             transition: background-color 0.2s;
         }
         .map-btn:hover {
-            background-color: #c7d2fe;
+            background-color: #99f6e4;
         }
         .map-btn i {
             margin-right: 3px;
         }
         .info-card {
             background: white;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             padding: 1.25rem;
             margin-bottom: 1rem;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
+            border: 1px solid #f5f5f4;
         }
         .info-card-header {
             font-weight: 700;
-            color: #1e293b;
+            color: #292524;
             margin-bottom: 0.75rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e7e5e4;
             display: flex;
             align-items: center;
         }
@@ -90,66 +90,75 @@
         }
         .data-label {
             width: 80px;
-            color: #64748b;
+            color: #78716c;
             font-weight: 500;
             flex-shrink: 0;
         }
         .data-value {
-            color: #334155;
+            color: #44403c;
             flex-grow: 1;
         }
+        button:not(:disabled) { transition: transform 0.08s ease; }
+        button:not(:disabled):active { transform: scale(0.96); }
     </style>
 </head>
 <body class="pb-20" data-trip-id="kobe-arima-2026">
 
-    <div id="access-gate" class="fixed inset-0 z-[100] bg-slate-800 flex items-center justify-center p-6">
+    <div id="access-gate" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
-            <i class="fa-solid fa-lock text-3xl text-slate-400 mb-3"></i>
-            <h2 class="font-bold text-slate-800 mb-1">로그인이 필요합니다</h2>
-            <p class="text-xs text-slate-500 mb-4">여행 계획을 보려면 구글 계정으로 로그인하세요</p>
-            <button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium flex items-center justify-center gap-2">
+            <i class="fa-solid fa-lock text-3xl text-stone-400 mb-3"></i>
+            <h2 class="font-bold text-stone-800 mb-1">로그인이 필요합니다</h2>
+            <p class="text-xs text-stone-500 mb-4">여행 계획을 보려면 구글 계정으로 로그인하세요</p>
+            <button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-lg border border-stone-200 text-stone-700 text-sm font-medium flex items-center justify-center gap-2">
                 <i class="fa-brands fa-google text-rose-500"></i> Google 계정으로 로그인
             </button>
             <p id="access-gate-error" class="text-xs text-rose-500 mt-2 h-4"></p>
         </div>
     </div>
 
-    <div id="trip-lock" class="fixed inset-0 z-[90] bg-slate-800 flex items-center justify-center p-6" style="display:none;">
+    <div id="trip-lock" class="fixed inset-0 z-[90] bg-stone-900 flex items-center justify-center p-6" style="display:none;">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
-            <i class="fa-solid fa-hourglass-half text-3xl text-slate-400 mb-3"></i>
-            <h2 class="font-bold text-slate-800 mb-1">아직 공개 전인 여행이에요</h2>
-            <p class="text-xs text-slate-500">여행이 끝나면 누구나 볼 수 있어요.<br>지금은 관리자만 확인할 수 있습니다.</p>
+            <i class="fa-solid fa-hourglass-half text-3xl text-stone-400 mb-3"></i>
+            <h2 class="font-bold text-stone-800 mb-1">아직 공개 전인 여행이에요</h2>
+            <p class="text-xs text-stone-500">여행이 끝나면 누구나 볼 수 있어요.<br>지금은 관리자만 확인할 수 있습니다.</p>
         </div>
     </div>
 
 
     <!-- Header -->
-    <header class="bg-slate-800 text-white p-5 sticky top-0 z-50 shadow-md">
+    <header class="bg-stone-900 text-white p-5 sticky top-0 z-50 shadow-md">
         <div class="flex justify-between items-center mb-2">
-            <a href="../index.html" class="text-slate-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
-            <button type="button" onclick="toggleLogin()" class="text-slate-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요">
+            <a href="../index.html" class="text-stone-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
+            <button type="button" onclick="toggleLogin()" class="text-stone-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요">
                 <i id="admin-login-icon" class="fa-solid fa-lock"></i>
             </button>
         </div>
         <div class="flex justify-between items-center mb-2">
             <h1 class="text-xl font-bold">상후 님의 가족여행 ✈️</h1>
-            <span class="text-xs bg-slate-700 px-2 py-1 rounded-full text-slate-200">3박 4일</span>
+            <span class="text-xs bg-white/10 px-2 py-1 rounded-full text-stone-100">3박 4일</span>
         </div>
-        <p class="text-sm text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> 고베 - 아리마 온천</p>
-        <p class="text-sm text-slate-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> 2026.07.26(일) - 07.29(수)</p>
+        <p class="text-sm text-stone-300"><i class="fa-solid fa-location-dot mr-1"></i> 고베 - 아리마 온천</p>
+        <p class="text-sm text-stone-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> 2026.07.26(일) - 07.29(수)</p>
     </header>
 
 
     <!-- Navigation Tabs -->
     <nav class="bg-white shadow-sm sticky top-[132px] z-40">
-        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-slate-500 whitespace-nowrap px-2">
-            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-slate-900 border-b-2 border-slate-800 transition-colors">1일차</button>
-            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">2일차</button>
-            <button onclick="switchTab('day3')" id="tab-day3" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">3일차</button>
-            <button onclick="switchTab('day4')" id="tab-day4" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">4일차</button>
-            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-slate-900 transition-colors">상세 정보</button>
+        <div class="flex overflow-x-auto hide-scrollbar text-sm font-medium text-stone-500 whitespace-nowrap px-2">
+            <button onclick="switchTab('day1')" id="tab-day1" class="tab-btn active px-4 py-3 text-stone-900 border-b-2 border-teal-600 transition-colors">1일차</button>
+            <button onclick="switchTab('day2')" id="tab-day2" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">2일차</button>
+            <button onclick="switchTab('day3')" id="tab-day3" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">3일차</button>
+            <button onclick="switchTab('day4')" id="tab-day4" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">4일차</button>
+            <button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">상세 정보</button>
         </div>
     </nav>
+
+    <!-- CSV Toolbar -->
+    <div class="max-w-lg mx-auto px-4 pt-3 flex flex-wrap gap-2">
+        <button type="button" onclick="exportTripCsv()" class="text-xs font-medium text-stone-600 bg-white border border-stone-200 rounded-full px-3 py-1.5 inline-flex items-center gap-1 transition active:scale-95 hover:border-stone-300"><i class="fa-solid fa-file-export"></i> CSV 내보내기</button>
+        <button type="button" onclick="downloadCsvTemplate()" class="text-xs font-medium text-stone-600 bg-white border border-stone-200 rounded-full px-3 py-1.5 inline-flex items-center gap-1 transition active:scale-95 hover:border-stone-300"><i class="fa-solid fa-file-lines"></i> 양식 받기</button>
+        <label class="admin-only hidden text-xs font-medium text-teal-700 bg-teal-50 border border-teal-200 rounded-full px-3 py-1.5 inline-flex items-center gap-1 cursor-pointer transition active:scale-95 hover:bg-teal-100"><i class="fa-solid fa-file-import"></i> CSV 가져오기<input type="file" accept=".csv,text/csv" onchange="importTripCsv(event)" class="hidden"></label>
+    </div>
 
 
     <!-- Main Content Area -->
@@ -158,186 +167,52 @@
 
         <!-- Day 1 -->
         <div id="day1" class="tab-content active">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">1일차 (7/26, 일)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">1일차 (7/26, 일)</h2>
             <div id="day1-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day1')">
-                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day1')">
+                <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
             </button>
         </div>
 
 
         <!-- Day 2 -->
         <div id="day2" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">2일차 (7/27, 월)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">2일차 (7/27, 월)</h2>
             <div id="day2-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day2')">
-                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day2')">
+                <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
             </button>
         </div>
 
 
         <!-- Day 3 -->
         <div id="day3" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">3일차 (7/28, 화)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">3일차 (7/28, 화)</h2>
             <div id="day3-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day3')">
-                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day3')">
+                <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
             </button>
         </div>
 
 
         <!-- Day 4 -->
         <div id="day4" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">4일차 (7/29, 수)</h2>
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">4일차 (7/29, 수)</h2>
             <div id="day4-items"></div>
-            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium mt-2" onclick="openAddItemModal('day4')">
-                <i class="fa-solid fa-plus mr-1"></i> 카드 추가
+            <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('day4')">
+                <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
             </button>
         </div>
 
 
         <!-- Info Section (Replaced Checklist with Sheet Data) -->
+        <!-- Info Section (Firestore-backed, editable) -->
         <div id="info" class="tab-content">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 ml-1">여행 상세 정보</h2>
-
-            <!-- 참고 링크 모음 -->
-            <div class="info-card">
-                <div class="info-card-header text-blue-500">
-                    <i class="fa-solid fa-link"></i> 참고 링크 및 예약 웹사이트
-                </div>
-                <ul class="text-sm text-slate-600 space-y-4">
-                    <li class="border-b border-slate-100 pb-3">
-                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-bed mr-1"></i> 숙소 예약 정보</div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>몬토레 고베</span>
-                            <a href="https://www.hotelmonterey.co.jp/kr/kobe/" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span>라코떼 아리마</span>
-                            <a href="https://relohotels.com/list_of_hotels/raconter-arima/" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                    </li>
-                    <li class="border-b border-slate-100 pb-3">
-                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-ticket mr-1"></i> 관광지 정보 및 예매</div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>스마 씨월드 참고</span>
-                            <a href="https://cafe.naver.com/worldtravelcafe/1070900" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 카페 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>호빵맨 박물관</span>
-                            <a href="https://www.kobe-anpanman.jp/kr/#shop" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">공식 홈페이지 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span>동물왕국 팁/입장권</span>
-                            <a href="https://m.blog.naver.com/wuouw1/224266589561" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="font-bold text-slate-700 mb-1 text-sm"><i class="fa-solid fa-bus-simple mr-1"></i> 교통편 참고 (블로그/카페)</div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>고베 - 간사이 비교</span>
-                            <a href="https://cafe.naver.com/20daelee/928131" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 카페 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>간사이공항 → 고베 버스</span>
-                            <a href="https://blog.naver.com/xmffutwl808/224258149172" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span>고베 → 아리마 버스</span>
-                            <a href="https://blog.naver.com/xmffutwl808/224264236555" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span>고베 → 간사이공항 버스</span>
-                            <a href="https://blog.naver.com/bloomingjeju/224305910103" target="_blank" class="text-blue-500 hover:text-blue-700 font-medium">네이버 블로그 <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-
-            <!-- 항공편 정보 -->
-            <div class="info-card">
-                <div class="info-card-header text-sky-600">
-                    <i class="fa-solid fa-plane"></i> 항공편 정보 (피치항공)
-                </div>
-                <div class="mb-3 border-b border-slate-100 pb-3">
-                    <p class="text-sm font-bold text-slate-700 mb-1">🛫 가는 편 (7/26 일)</p>
-                    <div class="data-row"><div class="data-label">MM712</div><div class="data-value">07:30 인천(T1) → 09:20 간사이(T2)</div></div>
-                    <div class="data-row"><div class="data-label">상후</div><div class="data-value">좌석 21D / 위탁수하물 1개</div></div>
-                    <div class="data-row"><div class="data-label">성은/하린</div><div class="data-value">좌석 21E / 좌석 21F</div></div>
-                </div>
-                <div>
-                    <p class="text-sm font-bold text-slate-700 mb-1">🛬 오는 편 (7/29 수)</p>
-                    <div class="data-row"><div class="data-label">MM711</div><div class="data-value">19:40 간사이(T2) → 21:35 인천(T1)</div></div>
-                    <div class="data-row"><div class="data-label">상후</div><div class="data-value">좌석 22A / 위탁수하물 1개</div></div>
-                    <div class="data-row"><div class="data-label">성은/하린</div><div class="data-value">좌석 22B / 좌석 22C</div></div>
-                </div>
-            </div>
-
-
-            <!-- 발렛파킹 -->
-            <div class="info-card">
-                <div class="info-card-header text-slate-600">
-                    <i class="fa-solid fa-square-parking"></i> 인천공항 발렛파킹
-                </div>
-                <div class="data-row"><div class="data-label">업체명</div><div class="data-value">M-Parking (일반 주차대행)</div></div>
-                <div class="data-row"><div class="data-label">차량번호</div><div class="data-value font-bold">192무5604 (X3/X4)</div></div>
-                <div class="data-row"><div class="data-label">예약번호</div><div class="data-value font-mono">358633720656</div></div>
-                <div class="data-row"><div class="data-label">인도/수령</div><div class="data-value">인천공항 단기주차 B1층 A구역15</div></div>
-                <div class="data-row"><div class="data-label">인도시간</div><div class="data-value text-rose-600 font-medium">7/26 (일) 05:15</div></div>
-                <div class="data-row"><div class="data-label">고객센터</div><div class="data-value">032-743-0124</div></div>
-            </div>
-
-
-            <!-- 숙소 정보 -->
-            <div class="info-card">
-                <div class="info-card-header text-indigo-500">
-                    <i class="fa-solid fa-hotel"></i> 숙소 상세 정보
-                </div>
-                <div class="mb-3 border-b border-slate-100 pb-3">
-                    <p class="text-sm font-bold text-slate-700 mb-1">호텔 몬토레 고베 (1~2박)</p>
-                    <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN 15:00 / OUT 11:00</div></div>
-                    <div class="data-row"><div class="data-label">식사/시설</div><div class="data-value">이탈리안 조식 / 2층 사우나(온욕) 시설</div></div>
-                    <div class="data-row"><div class="data-label">연락처</div><div class="data-value">+81-78-392-7111</div></div>
-                </div>
-                <div>
-                    <p class="text-sm font-bold text-slate-700 mb-1">라코떼 아리마 (3박)</p>
-                    <div class="data-row"><div class="data-label">이용시간</div><div class="data-value">IN 15:00 / OUT 10:00</div></div>
-                    <div class="data-row"><div class="data-label">특징</div><div class="data-value">전 14실 소규모 료칸 (셔틀없음, 택시권장)</div></div>
-                    <div class="data-row"><div class="data-label">온천/식사</div><div class="data-value">공동욕장/노천탕 (가족탕 없음)<br>석식(가이세키) 및 조식(화식 뷔페) 포함</div></div>
-                    <div class="data-row"><div class="data-label">연락처</div><div class="data-value">078-903-4315</div></div>
-                </div>
-            </div>
-
-
-            <!-- 수하물 및 전략 -->
-            <div class="info-card">
-                <div class="info-card-header text-emerald-600">
-                    <i class="fa-solid fa-suitcase"></i> 이동 및 수하물 전략
-                </div>
-                <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
-                    <li><strong>수하물 원칙:</strong> 모든 캐리어를 항상 통틀어 이동 (분리하지 않음)</li>
-                    <li><strong>1일차 체크인:</strong> 짐 보관 후 일정 진행 → 이자카야 저녁 식사 후 <strong>레이트 체크인(21:00~) 사전 고지 필수</strong></li>
-                    <li><strong>3일차 짐 보관:</strong> 호빵맨 박물관 일정 중 코인 로커 미사용. 체크아웃 후 프론트에 무료 보관 후 점심 식사 이후 수령</li>
-                    <li><strong>폭염 대응 (매우 중요):</strong> 7월 하순 최고 기온 34~36℃. <strong>10분 이상 도보는 택시/버스로 무조건 대체</strong></li>
-                </ul>
-            </div>
-
-
-            <!-- 관광지 상세 정보 -->
-            <div class="info-card">
-                <div class="info-card-header text-rose-500">
-                    <i class="fa-solid fa-camera-retro"></i> 기타노 이진칸 주요 스팟
-                </div>
-                <ul class="text-sm text-slate-600 space-y-3">
-                    <li><strong>우로코노이에 (비늘의 집):</strong> 외벽이 천연석 비늘 모양. 정원의 '멧돼지 동상' 코를 만지면 행운이 온다는 속설이 있음.</li>
-                    <li><strong>야마테 8번관:</strong> 내부에 '새턴의 의자'가 있어 소원을 비는 스팟 (여자는 오른쪽, 남자는 왼쪽에 착석).</li>
-                    <li><strong>영국관:</strong> 명탐정 셜록 홈즈의 방 재현. 망토/모자 착용 후 인증샷 가능.</li>
-                    <li><strong>스타벅스 고베 기타노이진칸점:</strong> 1907년 지어진 미국인 소유 목조 저택 통째 매장. 개화기 레트로 감성 및 외관 인증샷 필수.</li>
-                </ul>
-            </div>
-
-
+            <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">여행 상세 정보</h2>
+            <div id="info-sections"></div>
+            <button type="button" id="info-add-btn" class="hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-1" onclick="openAddInfoSection()">
+                <i class="fa-solid fa-plus mr-1"></i> 정보 카드 추가
+            </button>
         </div>
 
 
@@ -347,13 +222,13 @@
     <!-- Note Modal -->
     <div id="note-modal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeNoteModal()"></div>
-        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto">
-            <h3 id="note-modal-title" class="font-bold text-slate-800 mb-2">메모</h3>
-            <textarea id="note-modal-textarea" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
-            <div id="note-modal-status" class="text-xs text-slate-400 mt-1 h-4"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto">
+            <h3 id="note-modal-title" class="font-bold text-stone-800 mb-2">메모</h3>
+            <textarea id="note-modal-textarea" class="w-full border border-stone-200 rounded-lg p-2 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-amber-300" placeholder="메모를 입력하세요 (URL 링크도 남길 수 있어요)"></textarea>
+            <div id="note-modal-status" class="text-xs text-stone-400 mt-1 h-4"></div>
             <div class="flex gap-2 mt-3 pb-2">
-                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">닫기</button>
-                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+                <button type="button" onclick="closeNoteModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">닫기</button>
+                <button type="button" id="note-modal-save" onclick="saveNote()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
             </div>
         </div>
     </div>
@@ -361,23 +236,44 @@
     <!-- Item Add/Edit Modal -->
     <div id="item-modal" class="fixed inset-0 z-[65] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeItemModal()"></div>
-        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
-            <h3 id="item-modal-title" class="font-bold text-slate-800 mb-3">카드 추가</h3>
-            <label class="text-xs text-slate-500 font-medium">종류</label>
-            <select id="item-modal-preset" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2"></select>
-            <label class="text-xs text-slate-500 font-medium">시간</label>
-            <input id="item-modal-time" type="text" placeholder="예: 09:00 ~ 10:30" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
-            <label class="text-xs text-slate-500 font-medium">제목</label>
-            <input id="item-modal-title-input" type="text" placeholder="일정 제목" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
-            <label class="text-xs text-slate-500 font-medium">설명 (선택)</label>
-            <textarea id="item-modal-desc" class="w-full border border-slate-200 rounded-lg p-2 text-sm h-20 mb-2" placeholder="세부 설명, URL 링크도 가능"></textarea>
-            <label class="text-xs text-slate-500 font-medium">장소 링크 (선택)</label>
-            <input id="item-modal-map" type="text" placeholder="장소명 입력 → 구글지도 검색 / URL 붙여넣기 → 그 링크로 연결" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
+            <h3 id="item-modal-title" class="font-bold text-stone-800 mb-3">일정카드 추가</h3>
+            <label class="text-xs text-stone-500 font-medium">종류</label>
+            <select id="item-modal-preset" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2"></select>
+            <label class="text-xs text-stone-500 font-medium">시간</label>
+            <input id="item-modal-time" type="text" placeholder="예: 09:00 ~ 10:30" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-stone-500 font-medium">제목</label>
+            <input id="item-modal-title-input" type="text" placeholder="일정 제목" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
+            <label class="text-xs text-stone-500 font-medium">설명 (선택)</label>
+            <textarea id="item-modal-desc" class="w-full border border-stone-200 rounded-lg p-2 text-sm h-20 mb-2" placeholder="세부 설명, URL 링크도 가능"></textarea>
+            <label class="text-xs text-stone-500 font-medium">장소 링크 (선택)</label>
+            <input id="item-modal-map" type="text" placeholder="장소명 입력 → 구글지도 검색 / URL 붙여넣기 → 그 링크로 연결" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2">
             <div id="item-modal-status" class="text-xs text-rose-500 mb-2 h-4"></div>
             <div class="flex gap-2 pb-2">
                 <button type="button" id="item-modal-delete" onclick="deleteItemFromModal()" class="hidden px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
-                <button type="button" onclick="closeItemModal()" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium">취소</button>
-                <button type="button" onclick="saveItem()" class="flex-1 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium">저장</button>
+                <button type="button" onclick="closeItemModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveItem()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Section Add/Edit Modal -->
+    <div id="info-modal" class="fixed inset-0 z-[65] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeInfoModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
+            <h3 id="info-modal-heading" class="font-bold text-stone-800 mb-3">정보 카드 추가</h3>
+            <label class="text-xs text-stone-500 font-medium">아이콘</label>
+            <select id="info-modal-icon" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-2"></select>
+            <label class="text-xs text-stone-500 font-medium">제목</label>
+            <input id="info-modal-title-input" type="text" placeholder="카드 제목 (예: 항공편 정보)" class="w-full border border-stone-200 rounded-lg p-2 text-sm mb-3">
+            <label class="text-xs text-stone-500 font-medium">내용 (항목은 비워두면 불릿 줄로 표시됩니다)</label>
+            <div id="info-modal-rows" class="mt-1"></div>
+            <button type="button" onclick="addInfoRow()" class="text-xs text-teal-700 font-medium mb-2"><i class="fa-solid fa-plus mr-1"></i> 행 추가</button>
+            <div id="info-modal-status" class="text-xs text-rose-500 mb-2 h-4"></div>
+            <div class="flex gap-2 pb-2">
+                <button type="button" id="info-modal-delete" onclick="deleteInfoSection()" class="hidden px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="closeInfoModal()" class="flex-1 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">취소</button>
+                <button type="button" onclick="saveInfoSection()" class="flex-1 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
             </div>
         </div>
     </div>
@@ -386,13 +282,13 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
-                el.classList.add('text-slate-500');
+                el.classList.remove('active', 'text-stone-900', 'border-b-2', 'border-teal-600');
+                el.classList.add('text-stone-500');
             });
             document.getElementById(tabId).classList.add('active');
             const activeBtn = document.getElementById('tab-' + tabId);
-            activeBtn.classList.remove('text-slate-500');
-            activeBtn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-800');
+            activeBtn.classList.remove('text-stone-500');
+            activeBtn.classList.add('active', 'text-stone-900', 'border-b-2', 'border-teal-600');
         }
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -406,5 +302,8 @@
     <script src="../assets/notes.js"></script>
     <script src="kobe-arima-2026-data.js"></script>
     <script src="../assets/itinerary.js"></script>
+    <script src="../assets/trip-io.js"></script>
+    <script src="kobe-arima-2026-info.js"></script>
+    <script src="../assets/tripinfo.js"></script>
 </body>
 </html>

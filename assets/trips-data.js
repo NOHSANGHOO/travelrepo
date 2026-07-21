@@ -12,7 +12,7 @@ const TRIPS = [
         endDate: "2026-07-29",
         duration: "3박 4일",
         icon: "fa-solid fa-hot-tub-person",
-        gradient: "from-indigo-500 to-sky-500",
+        gradient: "from-teal-500 to-sky-500",
         url: "trips/kobe-arima-2026.html"
     }
 ];

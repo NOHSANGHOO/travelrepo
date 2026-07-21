@@ -17,7 +17,7 @@
         const escaped = escapeHtml(str);
         const urlRegex = /(https?:\/\/[^\s<]+)/g;
         return escaped
-            .replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener" class="underline text-indigo-700 break-all">${url}</a>`)
+            .replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener" class="underline text-teal-700 break-all">${url}</a>`)
             .replace(/\n/g, "<br>");
     }
 
