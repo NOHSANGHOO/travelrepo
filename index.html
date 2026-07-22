@@ -5,18 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>상후 님의 여행 기록</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = { theme: { extend: { colors: { teal: {
+            50: '#f2f7f4', 100: '#dfeae3', 200: '#c2d8ca', 300: '#98bda8', 400: '#6ba088',
+            500: '#4d8a70', 600: '#3f735d', 700: '#355d4b', 800: '#2d4b3d', 900: '#273e33'
+        } } } } };
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #faf7f2;
+            background-color: #f6f1e9;
             -webkit-tap-highlight-color: transparent;
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        button:not(:disabled) { transition: transform 0.08s ease; }
+        button:not(:disabled), a { transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease; }
         button:not(:disabled):active { transform: scale(0.96); }
+        #trip-list > a:active { transform: scale(0.985); }
     </style>
 </head>
 <body class="pb-20">
@@ -36,9 +44,17 @@
     <header class="bg-stone-900 text-white p-5 sticky top-0 z-50 shadow-md">
         <div class="flex justify-between items-center mb-1">
             <h1 class="text-xl font-bold">상후 님의 여행 기록 ✈️</h1>
-            <button type="button" onclick="toggleLogin()" class="text-stone-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요">
-                <i id="admin-login-icon" class="fa-solid fa-lock"></i>
-            </button>
+            <div class="relative">
+                <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인 필요">
+                    <i id="admin-login-icon" class="fa-solid fa-lock"></i>
+                </button>
+                <div id="profile-popover" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-stone-100 p-3 text-left z-[80]">
+                    <p class="text-[11px] text-stone-400 mb-0.5">로그인 계정</p>
+                    <p id="profile-email" class="text-sm font-medium text-stone-800 break-all"></p>
+                    <p id="profile-role" class="text-xs text-teal-600 font-medium mb-3"></p>
+                    <button type="button" onclick="doSignOut()" class="w-full py-2 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-600 text-sm font-medium">로그아웃</button>
+                </div>
+            </div>
         </div>
         <p class="text-sm text-stone-300 mt-1">다녀온, 그리고 앞으로 떠날 여행들</p>
     </header>

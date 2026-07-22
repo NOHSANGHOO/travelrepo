@@ -5,17 +5,18 @@
     let currentEditDayId = null;
     let currentEditItemId = null;
 
+    // 따뜻한 아날로그 파스텔 팔레트 (조화로운 톤, 과채도 지양)
     const ICON_PRESETS = [
-        { key: "flight", label: "✈️ 항공", icon: "fa-solid fa-plane", color: "bg-sky-500" },
-        { key: "transport", label: "🚌 이동/교통", icon: "fa-solid fa-bus", color: "bg-teal-500" },
-        { key: "car", label: "🚗 차량", icon: "fa-solid fa-car", color: "bg-stone-700" },
-        { key: "food", label: "🍽️ 식사", icon: "fa-solid fa-utensils", color: "bg-rose-500" },
-        { key: "hotel", label: "🛏️ 숙소", icon: "fa-solid fa-bed", color: "bg-stone-700" },
-        { key: "sight", label: "📸 관광/체험", icon: "fa-solid fa-camera", color: "bg-emerald-500" },
-        { key: "shopping", label: "🛍️ 쇼핑", icon: "fa-solid fa-bag-shopping", color: "bg-purple-500" },
-        { key: "onsen", label: "♨️ 온천/휴식", icon: "fa-solid fa-hot-tub-person", color: "bg-amber-600" },
-        { key: "drink", label: "🍺 술집/야식", icon: "fa-solid fa-beer-mug-empty", color: "bg-orange-500" },
-        { key: "etc", label: "📌 기타", icon: "fa-solid fa-location-dot", color: "bg-stone-500" }
+        { key: "flight", label: "✈️ 항공", icon: "fa-solid fa-plane", color: "bg-[#6f97b3]" },
+        { key: "transport", label: "🚌 이동/교통", icon: "fa-solid fa-bus", color: "bg-[#7ba394]" },
+        { key: "car", label: "🚗 차량", icon: "fa-solid fa-car", color: "bg-[#948777]" },
+        { key: "food", label: "🍽️ 식사", icon: "fa-solid fa-utensils", color: "bg-[#cc7c5e]" },
+        { key: "hotel", label: "🛏️ 숙소", icon: "fa-solid fa-bed", color: "bg-[#a08b74]" },
+        { key: "sight", label: "📸 관광/체험", icon: "fa-solid fa-camera", color: "bg-[#84a56d]" },
+        { key: "shopping", label: "🛍️ 쇼핑", icon: "fa-solid fa-bag-shopping", color: "bg-[#b783a0]" },
+        { key: "onsen", label: "♨️ 온천/휴식", icon: "fa-solid fa-hot-tub-person", color: "bg-[#d29a63]" },
+        { key: "drink", label: "🍺 술집/야식", icon: "fa-solid fa-beer-mug-empty", color: "bg-[#cc9152]" },
+        { key: "etc", label: "📌 기타", icon: "fa-solid fa-location-dot", color: "bg-[#9c9288]" }
     ];
 
     function presetByKey(key) {
@@ -188,8 +189,9 @@
         if (!drag) return;
         const wrapper = document.querySelector(`.timeline-item[data-item-id="${drag.itemId}"]`);
         if (!wrapper) return;
+        wrapper.classList.add("dragging");
         const card = wrapper.querySelector(".item-card");
-        if (card) card.classList.add("ring-2", "ring-teal-400", "opacity-90");
+        if (card) card.classList.add("ring-2", "ring-teal-400");
     }
 
     function targetIdUnderPointer(dayId, clientY) {
@@ -235,6 +237,7 @@
         document.removeEventListener("pointerup", onPointerUp);
         document.removeEventListener("pointercancel", onPointerUp);
         document.body.style.userSelect = "";
+        document.body.classList.remove("dragging-active");
         saveDay(dayId, list).catch(function (err) {
             alert("순서 저장에 실패했어요. 다시 시도해주세요.");
             console.error(err);
@@ -248,6 +251,7 @@
         e.preventDefault();
         drag = { dayId: handle.dataset.dayId, itemId: handle.dataset.itemId };
         document.body.style.userSelect = "none";
+        document.body.classList.add("dragging-active");
         document.addEventListener("pointermove", onPointerMove, { passive: false });
         document.addEventListener("pointerup", onPointerUp);
         document.addEventListener("pointercancel", onPointerUp);

@@ -18,10 +18,10 @@ const DEFAULT_TRIPS = [
         gradient: "from-teal-500 to-sky-500",
         order: 0,
         days: [
-            { id: "day1", label: "1일차 (7/26, 일)" },
-            { id: "day2", label: "2일차 (7/27, 월)" },
-            { id: "day3", label: "3일차 (7/28, 화)" },
-            { id: "day4", label: "4일차 (7/29, 수)" }
+            { id: "day1", date: "2026-07-26", label: "1일차 (7/26, 일)" },
+            { id: "day2", date: "2026-07-27", label: "2일차 (7/27, 월)" },
+            { id: "day3", date: "2026-07-28", label: "3일차 (7/28, 화)" },
+            { id: "day4", date: "2026-07-29", label: "4일차 (7/29, 수)" }
         ]
     }
 ];

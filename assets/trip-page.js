@@ -21,9 +21,28 @@
         return String(label || "").split(" (")[0];
     }
 
+    function addDaysISO(iso, n) {
+        const d = new Date(iso + "T00:00:00");
+        if (isNaN(d)) return "";
+        d.setDate(d.getDate() + n);
+        const p = (x) => String(x).padStart(2, "0");
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+    }
+
+    // Normalized days, each guaranteed to have a `date` (derived from startDate if missing).
+    window.__tripDays = function () {
+        return normalizeDays(meta && meta.days).map(function (d, i) {
+            return {
+                id: d.id,
+                label: d.label,
+                date: d.date || (meta && meta.startDate ? addDaysISO(meta.startDate, i) : "day" + (i + 1))
+            };
+        });
+    };
+
     // ---- Build page structure from meta ----
     function activateTab() {
-        const ids = ((meta && meta.days) || []).map((d) => d.id).concat(["info"]);
+        const ids = normalizeDays(meta && meta.days).map((d) => d.id).concat(["info"]);
         if (ids.indexOf(currentTab) < 0) currentTab = ids[0] || "info";
         document.querySelectorAll(".tab-content").forEach((el) => el.classList.remove("active"));
         document.querySelectorAll(".tab-btn").forEach((el) => {
@@ -44,40 +63,63 @@
         activateTab();
     };
 
+    // Firestore console mistakes (or old data) can leave `days` as a map like
+    // {0: {...}, 1: {...}} instead of a real array — tolerate that instead of crashing.
+    function normalizeDays(rawDays) {
+        if (Array.isArray(rawDays)) return rawDays.filter((d) => d && d.id);
+        if (rawDays && typeof rawDays === "object") {
+            return Object.keys(rawDays)
+                .sort((a, b) => Number(a) - Number(b))
+                .map((k) => rawDays[k])
+                .filter((d) => d && d.id);
+        }
+        return [];
+    }
+
     function buildStructure() {
-        document.title = (meta.title || "여행") + " · 여행 상세";
-        document.getElementById("trip-header-body").innerHTML = `
-            <div class="flex justify-between items-center mb-2">
-                <h1 class="text-xl font-bold">${esc(meta.headerTitle || meta.title || "")}</h1>
-                <span class="text-xs bg-white/10 px-2 py-1 rounded-full text-stone-100">${esc(meta.duration || "")}</span>
-            </div>
-            <p class="text-sm text-stone-300"><i class="fa-solid fa-location-dot mr-1"></i> ${esc(meta.locationLabel || meta.location || "")}</p>
-            <p class="text-sm text-stone-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${esc(meta.dateLabel || "")}</p>`;
+        try {
+            document.title = (meta.title || "여행") + " · 여행 상세";
+            document.getElementById("trip-header-body").innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <h1 class="text-xl font-bold">${esc(meta.headerTitle || meta.title || "")}</h1>
+                    <span class="text-xs bg-white/10 px-2 py-1 rounded-full text-stone-100">${esc(meta.duration || "")}</span>
+                </div>
+                <p class="text-sm text-stone-300"><i class="fa-solid fa-location-dot mr-1"></i> ${esc(meta.locationLabel || meta.location || "")}</p>
+                <p class="text-sm text-stone-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${esc(meta.dateLabel || "")}</p>`;
 
-        const days = meta.days || [];
-        let tabsHtml = days
-            .map((d) => `<button onclick="switchTab('${d.id}')" id="tab-${d.id}" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">${esc(dayShort(d.label))}</button>`)
-            .join("");
-        tabsHtml += `<button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">상세 정보</button>`;
-        document.getElementById("trip-tabs").innerHTML = tabsHtml;
+            const days = normalizeDays(meta.days);
+            let tabsHtml = days
+                .map((d) => `<button onclick="switchTab('${esc(d.id)}')" id="tab-${esc(d.id)}" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">${esc(dayShort(d.label))}</button>`)
+                .join("");
+            tabsHtml += `<button onclick="switchTab('info')" id="tab-info" class="tab-btn px-4 py-3 hover:text-stone-900 transition-colors">상세 정보</button>`;
+            document.getElementById("trip-tabs").innerHTML = tabsHtml;
 
-        document.getElementById("trip-days").innerHTML = days
-            .map(
-                (d) => `
-            <div id="${d.id}" class="tab-content">
-                <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">${esc(d.label)}</h2>
-                <div id="${d.id}-items"></div>
-                <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('${d.id}')">
-                    <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
-                </button>
-            </div>`
-            )
-            .join("");
+            if (!days.length) {
+                document.getElementById("trip-days").innerHTML = `<p class="text-sm text-stone-500 text-center py-8">아직 일차가 없어요. 헤더의 ⚙️ 아이콘에서 일차를 추가해주세요.</p>`;
+            } else {
+                document.getElementById("trip-days").innerHTML = days
+                    .map(
+                        (d) => `
+                <div id="${esc(d.id)}" class="tab-content">
+                    <h2 class="text-lg font-bold text-stone-800 mb-4 ml-1">${esc(d.label)}</h2>
+                    <div id="${esc(d.id)}-items"></div>
+                    <button type="button" class="admin-add-btn hidden w-full py-2.5 rounded-lg border border-dashed border-stone-300 text-stone-500 text-sm font-medium mt-2" onclick="openAddItemModal('${esc(d.id)}')">
+                        <i class="fa-solid fa-plus mr-1"></i> 일정카드 추가
+                    </button>
+                </div>`
+                    )
+                    .join("");
+            }
 
-        activateTab();
-        if (typeof window.__renderItinerary === "function") window.__renderItinerary();
-        if (typeof window.__renderTripInfo === "function") window.__renderTripInfo();
-        if (typeof window.__applyTripVisibility === "function") window.__applyTripVisibility();
+            activateTab();
+            if (typeof window.__renderItinerary === "function") window.__renderItinerary();
+            if (typeof window.__renderTripInfo === "function") window.__renderTripInfo();
+            if (typeof window.__applyTripVisibility === "function") window.__applyTripVisibility();
+        } catch (err) {
+            console.error("여행 페이지를 구성하는 중 오류가 발생했습니다.", err);
+            document.getElementById("trip-header-body").innerHTML = `<h1 class="text-xl font-bold">화면을 불러오지 못했어요</h1>`;
+            document.getElementById("trip-days").innerHTML = `<p class="text-sm text-rose-500 text-center py-8">데이터 형식에 문제가 있는 것 같아요.<br>개발자 도구 콘솔 오류 메시지를 확인해주세요.</p>`;
+        }
     }
 
     function showNotFound() {
@@ -130,7 +172,7 @@
         document.getElementById("ts-start").value = meta.startDate || "";
         document.getElementById("ts-end").value = meta.endDate || "";
         document.getElementById("ts-days").innerHTML = "";
-        (meta.days || []).forEach(addSettingsDayRow);
+        normalizeDays(meta.days).forEach(addSettingsDayRow);
         document.getElementById("ts-status").textContent = "";
         document.getElementById("trip-settings-modal").classList.remove("hidden");
     };
@@ -158,7 +200,7 @@
             return;
         }
         // rebuild days: keep existing ids, assign new ids to new rows
-        const existing = meta.days || [];
+        const existing = normalizeDays(meta.days);
         const usedIds = existing.map((d) => d.id);
         const days = [];
         const kept = [];
@@ -168,7 +210,8 @@
             if (!id) {
                 id = nextDayId(existing.concat(days.map((d) => ({ id: d.id }))));
             }
-            days.push({ id: id, label: label });
+            // date is assigned by position from the start date (consecutive days)
+            days.push({ id: id, date: addDaysISO(startDate, days.length), label: label });
             kept.push(id);
         });
         if (!days.length) {

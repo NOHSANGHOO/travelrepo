@@ -55,18 +55,52 @@
 
     function updateLoginUI(user) {
         const icon = document.getElementById("admin-login-icon");
-        if (!icon) return;
-        const btn = icon.closest("button");
-        if (user) {
-            icon.classList.remove("fa-lock");
-            icon.classList.add("fa-unlock");
-            if (btn) btn.title = emailPrefix(user.email) + " 로그인됨 (클릭하여 로그아웃)";
-        } else {
-            icon.classList.remove("fa-unlock");
-            icon.classList.add("fa-lock");
-            if (btn) btn.title = "로그인 필요";
+        if (icon) {
+            const btn = icon.closest("button");
+            if (user) {
+                icon.classList.remove("fa-lock");
+                icon.classList.add("fa-circle-user");
+                if (btn) btn.title = emailPrefix(user.email) + " (클릭하여 계정 정보)";
+            } else {
+                icon.classList.remove("fa-circle-user");
+                icon.classList.add("fa-lock");
+                if (btn) btn.title = "로그인 필요";
+            }
         }
+        const emailEl = document.getElementById("profile-email");
+        if (emailEl && user) emailEl.textContent = user.email || "";
+        const roleEl = document.getElementById("profile-role");
+        if (roleEl && user) roleEl.textContent = window.isAdmin() ? "관리자 · 편집 가능" : "뷰어 · 읽기 전용";
+        if (!user) hideProfile();
     }
+
+    function hideProfile() {
+        const pop = document.getElementById("profile-popover");
+        if (pop) pop.classList.add("hidden");
+    }
+
+    window.onProfileClick = function (e) {
+        if (e) e.stopPropagation();
+        if (auth && auth.currentUser) {
+            const pop = document.getElementById("profile-popover");
+            if (pop) pop.classList.toggle("hidden");
+        } else {
+            window.gateSignIn();
+        }
+    };
+
+    window.doSignOut = function () {
+        hideProfile();
+        if (auth) auth.signOut();
+    };
+
+    // close popover when tapping elsewhere
+    document.addEventListener("click", function (e) {
+        const pop = document.getElementById("profile-popover");
+        if (!pop || pop.classList.contains("hidden")) return;
+        if (e.target.closest("#profile-popover") || e.target.closest("#profile-btn")) return;
+        hideProfile();
+    });
 
     window.isAdmin = function () {
         return !!(auth && auth.currentUser && ADMIN_EMAILS.indexOf(auth.currentUser.email) !== -1);
