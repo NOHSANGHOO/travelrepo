@@ -95,14 +95,17 @@ function switchFilter(key) {
 function computeDays(startDate, count) {
     const days = [];
     const base = startDate ? new Date(startDate + "T00:00:00") : null;
+    const p = (n) => String(n).padStart(2, "0");
     for (let i = 0; i < count; i++) {
         let label = i + 1 + "일차";
+        let date = "";
         if (base) {
             const d = new Date(base);
             d.setDate(base.getDate() + i);
+            date = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
             label = `${i + 1}일차 (${d.getMonth() + 1}/${d.getDate()}, ${WEEKDAYS[d.getDay()]})`;
         }
-        days.push({ id: "day" + (i + 1), label: label });
+        days.push({ id: "day" + (i + 1), date: date, label: label });
     }
     return days;
 }

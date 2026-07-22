@@ -4,15 +4,16 @@
     let listenerStarted = false;
     let currentEditId = null;
 
+    // 따뜻한 아날로그 파스텔 팔레트 (아이콘 프리셋과 톤 통일)
     const INFO_PRESETS = [
-        { key: "link", label: "🔗 링크/예약", icon: "fa-solid fa-link", text: "text-teal-600" },
-        { key: "plane", label: "✈️ 항공편", icon: "fa-solid fa-plane", text: "text-sky-600" },
-        { key: "parking", label: "🅿️ 주차/발렛", icon: "fa-solid fa-square-parking", text: "text-stone-600" },
-        { key: "hotel", label: "🏨 숙소", icon: "fa-solid fa-hotel", text: "text-teal-600" },
-        { key: "suitcase", label: "🧳 수하물/전략", icon: "fa-solid fa-suitcase", text: "text-emerald-600" },
-        { key: "camera", label: "📷 관광 정보", icon: "fa-solid fa-camera-retro", text: "text-rose-500" },
-        { key: "ticket", label: "🎫 예매/티켓", icon: "fa-solid fa-ticket", text: "text-amber-600" },
-        { key: "info", label: "ℹ️ 기타 정보", icon: "fa-solid fa-circle-info", text: "text-stone-600" }
+        { key: "link", label: "🔗 링크/예약", icon: "fa-solid fa-link", text: "text-[#4d8a7a]" },
+        { key: "plane", label: "✈️ 항공편", icon: "fa-solid fa-plane", text: "text-[#5a83a0]" },
+        { key: "parking", label: "🅿️ 주차/발렛", icon: "fa-solid fa-square-parking", text: "text-[#7e7264]" },
+        { key: "hotel", label: "🏨 숙소", icon: "fa-solid fa-hotel", text: "text-[#8a7560]" },
+        { key: "suitcase", label: "🧳 수하물/전략", icon: "fa-solid fa-suitcase", text: "text-[#6d9256]" },
+        { key: "camera", label: "📷 관광 정보", icon: "fa-solid fa-camera-retro", text: "text-[#c26a4d]" },
+        { key: "ticket", label: "🎫 예매/티켓", icon: "fa-solid fa-ticket", text: "text-[#c08535]" },
+        { key: "info", label: "ℹ️ 기타 정보", icon: "fa-solid fa-circle-info", text: "text-[#8a8078]" }
     ];
 
     function infoPreset(key) {

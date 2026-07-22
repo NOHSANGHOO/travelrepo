@@ -5,28 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>여행 상세</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = { theme: { extend: { colors: { teal: {
+            50: '#f2f7f4', 100: '#dfeae3', 200: '#c2d8ca', 300: '#98bda8', 400: '#6ba088',
+            500: '#4d8a70', 600: '#3f735d', 700: '#355d4b', 800: '#2d4b3d', 900: '#273e33'
+        } } } } };
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #faf7f2; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f6f1e9; -webkit-tap-highlight-color: transparent; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content { display: none; animation: fadeIn 0.35s cubic-bezier(0.22,1,0.36,1); }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 24px; bottom: -24px; width: 2px; background-color: #e5e7eb; z-index: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 24px; bottom: -24px; width: 2px; background-color: #e5ded4; z-index: 0; }
         .timeline-item:last-child .timeline-line::before { display: none; }
-        .map-btn { display: inline-flex; align-items: center; font-size: 0.7rem; color: #0d9488; background-color: #ccfbf1; padding: 2px 6px; border-radius: 4px; margin-left: 6px; text-decoration: none; transition: background-color 0.2s; }
-        .map-btn:hover { background-color: #99f6e4; }
+        .map-btn { display: inline-flex; align-items: center; font-size: 0.7rem; color: #3f735d; background-color: #dfeae3; padding: 2px 6px; border-radius: 6px; margin-left: 6px; text-decoration: none; transition: background-color 0.2s, transform 0.08s; }
+        .map-btn:hover { background-color: #c2d8ca; }
+        .map-btn:active { transform: scale(0.94); }
         .map-btn i { margin-right: 3px; }
-        .info-card { background: white; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); border: 1px solid #f5f5f4; }
-        .info-card-header { font-weight: 700; color: #292524; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e7e5e4; display: flex; align-items: center; }
+        .info-card { background: white; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 3px 0 rgba(80, 60, 40, 0.06); border: 1px solid #efe9df; }
+        .info-card-header { font-weight: 700; color: #292524; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid #efe9df; display: flex; align-items: center; }
         .info-card-header i { margin-right: 0.5rem; font-size: 1.1rem; }
         .data-row { display: flex; margin-bottom: 0.5rem; font-size: 0.875rem; }
         .data-label { width: 80px; color: #78716c; font-weight: 500; flex-shrink: 0; }
         .data-value { color: #44403c; flex-grow: 1; }
-        button:not(:disabled) { transition: transform 0.08s ease; }
-        button:not(:disabled):active { transform: scale(0.96); }
+        /* micro-interactions */
+        button:not(:disabled) { transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; }
+        button:not(:disabled):active { transform: scale(0.95); }
+        .item-card { transition: box-shadow 0.2s ease, transform 0.14s cubic-bezier(0.22,1,0.36,1); }
+        .drag-handle { cursor: grab; touch-action: none; }
+        .timeline-item.dragging { z-index: 40; }
+        .timeline-item.dragging .item-card { transform: scale(1.035) rotate(-0.4deg); box-shadow: 0 14px 30px rgba(80,60,40,0.18); }
+        body.dragging-active, body.dragging-active * { cursor: grabbing !important; }
+        .tab-btn { position: relative; }
+        .note-btn, .map-btn, a { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
 <body class="pb-20">
@@ -56,9 +72,17 @@
     <header class="bg-stone-900 text-white p-5 sticky top-0 z-50 shadow-md">
         <div class="flex justify-between items-center mb-2">
             <a href="index.html" class="text-stone-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> 여행 목록으로</a>
-            <div class="flex items-center gap-3">
-                <button type="button" onclick="openTripSettings()" class="admin-only hidden text-stone-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="여행 정보 편집"><i class="fa-solid fa-gear"></i></button>
-                <button type="button" onclick="toggleLogin()" class="text-stone-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center" title="로그인 필요"><i id="admin-login-icon" class="fa-solid fa-lock"></i></button>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="openTripSettings()" class="admin-only hidden text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="여행 정보 편집"><i class="fa-solid fa-gear"></i></button>
+                <div class="relative">
+                    <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인 필요"><i id="admin-login-icon" class="fa-solid fa-lock"></i></button>
+                    <div id="profile-popover" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-stone-100 p-3 text-left z-[80]">
+                        <p class="text-[11px] text-stone-400 mb-0.5">로그인 계정</p>
+                        <p id="profile-email" class="text-sm font-medium text-stone-800 break-all"></p>
+                        <p id="profile-role" class="text-xs text-teal-600 font-medium mb-3"></p>
+                        <button type="button" onclick="doSignOut()" class="w-full py-2 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-600 text-sm font-medium">로그아웃</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="trip-header-body"></div>

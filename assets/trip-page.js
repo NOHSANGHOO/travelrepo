@@ -21,6 +21,25 @@
         return String(label || "").split(" (")[0];
     }
 
+    function addDaysISO(iso, n) {
+        const d = new Date(iso + "T00:00:00");
+        if (isNaN(d)) return "";
+        d.setDate(d.getDate() + n);
+        const p = (x) => String(x).padStart(2, "0");
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+    }
+
+    // Normalized days, each guaranteed to have a `date` (derived from startDate if missing).
+    window.__tripDays = function () {
+        return normalizeDays(meta && meta.days).map(function (d, i) {
+            return {
+                id: d.id,
+                label: d.label,
+                date: d.date || (meta && meta.startDate ? addDaysISO(meta.startDate, i) : "day" + (i + 1))
+            };
+        });
+    };
+
     // ---- Build page structure from meta ----
     function activateTab() {
         const ids = normalizeDays(meta && meta.days).map((d) => d.id).concat(["info"]);
@@ -191,7 +210,8 @@
             if (!id) {
                 id = nextDayId(existing.concat(days.map((d) => ({ id: d.id }))));
             }
-            days.push({ id: id, label: label });
+            // date is assigned by position from the start date (consecutive days)
+            days.push({ id: id, date: addDaysISO(startDate, days.length), label: label });
             kept.push(id);
         });
         if (!days.length) {
