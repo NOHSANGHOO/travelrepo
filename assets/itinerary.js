@@ -146,7 +146,7 @@
         const origin = encodeURIComponent(pts[0]);
         const destination = encodeURIComponent(pts[pts.length - 1]);
         const mids = pts.slice(1, -1).map(encodeURIComponent).join("|");
-        let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+        let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
         if (mids) url += `&waypoints=${mids}`;
         window.open(url, "_blank");
     };
