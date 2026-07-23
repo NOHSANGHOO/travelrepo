@@ -128,6 +128,21 @@
         </div>
     </div>
 
+    <!-- Route (하루 동선) Modal -->
+    <div id="route-modal" class="fixed inset-0 z-[66] hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeRouteModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-w-lg mx-auto max-h-[80vh] overflow-y-auto">
+            <h3 class="font-bold text-stone-800 mb-1"><i class="fa-solid fa-route text-teal-600 mr-1"></i> 하루 동선</h3>
+            <p class="text-xs text-stone-500 mb-3">번호 순서대로 방문해요. 장소를 누르면 지도가 하나씩 열립니다.</p>
+            <ol id="route-list" class="space-y-2 mb-3"></ol>
+            <p id="route-hint" class="text-xs text-stone-400 mb-2"></p>
+            <button type="button" id="route-drive-btn" onclick="openRouteDriving()" class="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-95">
+                <i class="fa-solid fa-car-side"></i> 구글지도에서 운전 경로 보기
+            </button>
+            <button type="button" onclick="closeRouteModal()" class="w-full mt-2 py-2 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">닫기</button>
+        </div>
+    </div>
+
     <!-- Item Add/Edit Modal -->
     <div id="item-modal" class="fixed inset-0 z-[65] hidden">
         <div class="absolute inset-0 bg-black/40" onclick="closeItemModal()"></div>
