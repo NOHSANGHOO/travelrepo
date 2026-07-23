@@ -87,16 +87,66 @@
             });
     }
 
-    window.openDayRoute = function (dayId) {
-        const pts = routePoints(dayId);
-        if (pts.length < 2) {
-            alert("동선을 그리려면 장소(구글지도 검색어)가 2곳 이상 필요해요.\n장소가 URL로만 되어 있으면 경로에 포함되지 않습니다.");
-            return;
+    // Places for a day, in visit order, that have any map link (place-name or URL).
+    function dayPlaces(dayId) {
+        return sortedItems(dayId)
+            .filter(function (it) {
+                return (it.mapQuery || "").trim();
+            })
+            .map(function (it) {
+                const q = (it.mapQuery || "").trim();
+                return { title: (it.title || "").trim(), query: q, href: mapHref(q), isUrl: isUrl(q) };
+            });
+    }
+
+    let routeDayId = null;
+
+    window.openRouteModal = function (dayId) {
+        routeDayId = dayId;
+        const places = dayPlaces(dayId);
+        const list = document.getElementById("route-list");
+        list.innerHTML = places
+            .map(function (p, i) {
+                return `<li class="flex items-center gap-3">
+                    <span class="w-6 h-6 shrink-0 rounded-full bg-teal-600 text-white text-xs font-bold flex items-center justify-center">${i + 1}</span>
+                    <span class="flex-1 text-sm text-stone-700 truncate">${escapeHtml(p.title || p.query)}</span>
+                    <a href="${escapeHtml(p.href)}" target="_blank" rel="noopener" class="map-btn"><i class="fa-solid fa-map-location-dot"></i>지도</a>
+                </li>`;
+            })
+            .join("");
+        const routeable = places.filter(function (p) {
+            return !p.isUrl;
+        });
+        const btn = document.getElementById("route-drive-btn");
+        const hint = document.getElementById("route-hint");
+        if (routeable.length >= 2) {
+            btn.classList.remove("hidden");
+            hint.textContent = "";
+        } else {
+            btn.classList.add("hidden");
+            hint.textContent = "운전 경로를 그리려면 장소명(구글지도 검색어)이 2곳 이상 필요해요. URL로 넣은 장소는 목록에서 하나씩 열 수 있어요.";
         }
+        document.getElementById("route-modal").classList.remove("hidden");
+    };
+
+    window.closeRouteModal = function () {
+        document.getElementById("route-modal").classList.add("hidden");
+    };
+
+    window.openRouteDriving = function () {
+        if (!routeDayId) return;
+        const pts = dayPlaces(routeDayId)
+            .filter(function (p) {
+                return !p.isUrl;
+            })
+            .map(function (p) {
+                return p.query;
+            });
+        if (pts.length < 2) return;
         const origin = encodeURIComponent(pts[0]);
         const destination = encodeURIComponent(pts[pts.length - 1]);
         const mids = pts.slice(1, -1).map(encodeURIComponent).join("|");
-        let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=transit`;
+        let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
         if (mids) url += `&waypoints=${mids}`;
         window.open(url, "_blank");
     };
@@ -151,9 +201,9 @@
         if (!container) return;
         const items = sortedItems(dayId);
         let html = "";
-        if (routePoints(dayId).length >= 2) {
-            html += `<button type="button" onclick="openDayRoute('${dayId}')" class="w-full mb-4 py-2.5 rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-95 hover:bg-teal-100">
-                        <i class="fa-solid fa-route"></i> 하루 동선 지도로 보기
+        if (dayPlaces(dayId).length >= 2) {
+            html += `<button type="button" onclick="openRouteModal('${dayId}')" class="w-full mb-4 py-2.5 rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-95 hover:bg-teal-100">
+                        <i class="fa-solid fa-route"></i> 하루 동선 보기
                      </button>`;
         }
         html += items.map((item) => renderItemHtml(dayId, item)).join("");
