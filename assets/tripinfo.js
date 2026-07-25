@@ -1,6 +1,18 @@
 (function () {
     const TRIP_ID = document.body.dataset.tripId;
-    let infoData = typeof DEFAULT_TRIPINFO !== "undefined" ? DEFAULT_TRIPINFO : { sections: [] };
+
+    function seedData() {
+        if (window.TRIP_SEEDS && window.TRIP_SEEDS[TRIP_ID] && window.TRIP_SEEDS[TRIP_ID].tripinfo) {
+            return window.TRIP_SEEDS[TRIP_ID].tripinfo;
+        }
+        if (typeof DEFAULT_TRIPINFO !== "undefined") return DEFAULT_TRIPINFO;
+        return null;
+    }
+    function hasSections(d) {
+        return d && Array.isArray(d.sections) && d.sections.length > 0;
+    }
+
+    let infoData = seedData() || { sections: [] };
     let listenerStarted = false;
     let currentEditId = null;
 
@@ -229,11 +241,14 @@
             .doc(TRIP_ID)
             .onSnapshot(
                 function (doc) {
-                    if (doc.exists) {
-                        infoData = doc.data() || { sections: [] };
+                    const data = doc.exists ? doc.data() : null;
+                    if (hasSections(data)) {
+                        infoData = data;
                     } else {
-                        infoData = typeof DEFAULT_TRIPINFO !== "undefined" ? DEFAULT_TRIPINFO : { sections: [] };
-                        maybeSeed();
+                        // Firestore 문서가 없거나 비어 있으면 시드값으로 복구
+                        const seed = seedData();
+                        infoData = seed || { sections: [] };
+                        if (seed) maybeSeed(seed);
                     }
                     renderInfo();
                 },
@@ -243,9 +258,9 @@
             );
     }
 
-    function maybeSeed() {
-        if (!isAdmin() || typeof DEFAULT_TRIPINFO === "undefined") return;
-        firebase.firestore().collection("tripinfo").doc(TRIP_ID).set(DEFAULT_TRIPINFO).catch(function (err) {
+    function maybeSeed(seed) {
+        if (!isAdmin() || !seed) return;
+        firebase.firestore().collection("tripinfo").doc(TRIP_ID).set(seed).catch(function (err) {
             console.error("초기 상세 정보를 저장하지 못했습니다.", err);
         });
     }
