@@ -11,6 +11,7 @@ index.html               여행 목록(첫 화면) — Firestore `trips` 컬렉�
 trip.html                범용 여행 상세 페이지 (?id=여행id 로 어떤 여행이든 표시)
 assets/trips-data.js     여행 목록 기본(시드) 데이터 (Firestore가 비었을 때만 사용)
 assets/trips-store.js    Firestore `trips` 컬렉션 구독/생성/수정/삭제 + 시딩 (공용)
+assets/trip-seeds.js     기존 여행(고베)의 상세정보/일정 복구용 시드 번들 — Firestore가 비면 자동 복구
 assets/site.js           목록 페이지 렌더링/필터 + "새 여행 만들기"
 assets/trip-page.js      trip.html 오케스트레이터 (메타→헤더/탭/일차 구성, 여행정보/일차 편집)
 assets/firebase-config.js   Firebase 프로젝트 연결 정보

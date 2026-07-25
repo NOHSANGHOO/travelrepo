@@ -1,6 +1,20 @@
 (function () {
     const TRIP_ID = document.body.dataset.tripId;
-    let itineraryData = typeof DEFAULT_ITINERARY !== "undefined" ? DEFAULT_ITINERARY : {};
+
+    function seedItinerary() {
+        if (window.TRIP_SEEDS && window.TRIP_SEEDS[TRIP_ID] && window.TRIP_SEEDS[TRIP_ID].itinerary) {
+            return window.TRIP_SEEDS[TRIP_ID].itinerary;
+        }
+        if (typeof DEFAULT_ITINERARY !== "undefined") return DEFAULT_ITINERARY;
+        return null;
+    }
+    function hasAnyItems(d) {
+        return d && Object.keys(d).some(function (k) {
+            return Array.isArray(d[k]) && d[k].length > 0;
+        });
+    }
+
+    let itineraryData = seedItinerary() || {};
     let listenerStarted = false;
     let currentEditDayId = null;
     let currentEditItemId = null;
@@ -318,11 +332,18 @@
             .onSnapshot(
                 function (doc) {
                     if (drag) return; // don't clobber an in-progress drag
-                    if (doc.exists) {
-                        itineraryData = doc.data() || {};
+                    const data = doc.exists ? doc.data() : null;
+                    if (hasAnyItems(data)) {
+                        itineraryData = data;
                     } else {
-                        itineraryData = typeof DEFAULT_ITINERARY !== "undefined" ? DEFAULT_ITINERARY : {};
-                        maybeSeedDefaults();
+                        // Firestore가 없거나 비어 있으면 시드값으로 복구 (시드가 있는 여행만)
+                        const seed = seedItinerary();
+                        if (seed && hasAnyItems(seed)) {
+                            itineraryData = seed;
+                            maybeSeedDefaults(seed);
+                        } else {
+                            itineraryData = data || {};
+                        }
                     }
                     renderAllDays();
                 },
@@ -332,14 +353,13 @@
             );
     }
 
-    function maybeSeedDefaults() {
-        if (!isAdmin()) return;
-        if (typeof DEFAULT_ITINERARY === "undefined") return;
+    function maybeSeedDefaults(seed) {
+        if (!isAdmin() || !seed) return;
         firebase
             .firestore()
             .collection("itineraries")
             .doc(TRIP_ID)
-            .set(DEFAULT_ITINERARY)
+            .set(seed)
             .catch(function (err) {
                 console.error("초기 데이터를 저장하지 못했습니다.", err);
             });
