@@ -3,6 +3,7 @@
     const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
     let meta = null;
     let currentTab = null;
+    let commentsBound = false;
 
     function esc(str) {
         return String(str == null ? "" : str)
@@ -141,6 +142,10 @@
         }
         meta = found;
         window.__tripMeta = found;
+        if (window.Comments && !commentsBound && TRIP_ID) {
+            commentsBound = true;
+            window.Comments.setTarget("trip:" + TRIP_ID);
+        }
         buildStructure();
     }
 
@@ -263,9 +268,10 @@
     };
 
     document.addEventListener("DOMContentLoaded", function () {
+        if (window.TripsStore) window.TripsStore.start(); // 열람은 로그인 없이도 가능
         if (typeof window.onAuthChange === "function") {
-            window.onAuthChange(function (user) {
-                if (user && window.TripsStore) window.TripsStore.start();
+            window.onAuthChange(function () {
+                if (window.TripsStore) window.TripsStore.start();
                 if (meta) buildStructure();
             });
         }

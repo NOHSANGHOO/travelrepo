@@ -29,7 +29,7 @@
 </head>
 <body class="pb-20">
 
-    <div id="access-gate" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
+    <div id="access-gate" style="display:none;" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
             <i class="fa-solid fa-lock text-3xl text-stone-400 mb-3"></i>
             <h2 class="font-bold text-stone-800 mb-1">로그인이 필요합니다</h2>
@@ -46,8 +46,8 @@
         <div class="flex justify-between items-center mb-1">
             <h1 class="text-xl font-bold">여행계획 ✈️</h1>
             <div class="relative">
-                <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인 필요">
-                    <i id="admin-login-icon" class="fa-solid fa-lock"></i>
+                <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인">
+                    <i id="admin-login-icon" class="fa-solid fa-arrow-right-to-bracket"></i>
                 </button>
                 <div id="profile-popover" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-stone-100 p-3 text-left z-[80]">
                     <p class="text-[11px] text-stone-400 mb-0.5">로그인 계정</p>

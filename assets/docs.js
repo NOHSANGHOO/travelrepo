@@ -24,6 +24,20 @@
     let listenerStarted = false;
     let currentId = null;
     let query = "";
+    let pendingDocId = new URLSearchParams(location.search).get("doc") || null;
+
+    function shareUrl(id) {
+        return new URL("docs.html?type=" + type + "&doc=" + encodeURIComponent(id), location.href).href;
+    }
+
+    function setUrl(id) {
+        const url = id ? "docs.html?type=" + type + "&doc=" + encodeURIComponent(id) : "docs.html?type=" + type;
+        try {
+            history.replaceState(null, "", url);
+        } catch (e) {
+            /* ignore */
+        }
+    }
 
     function isAdmin() {
         return !!(window.isAdmin && window.isAdmin());
@@ -89,12 +103,15 @@
             });
         container.innerHTML = filtered
             .map(function (d) {
-                return `<button type="button" onclick="openDoc('${d.id}')" class="w-full text-left bg-white rounded-2xl shadow-sm border border-stone-100 p-4 hover:shadow-md transition-shadow active:scale-[0.99]">
+                return `<div onclick="openDoc('${d.id}')" role="button" tabindex="0" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-stone-100 p-4 hover:shadow-md transition-shadow active:scale-[0.99]">
                     <div class="flex items-center justify-between gap-2">
                         <h3 class="font-bold text-stone-800 truncate">${escapeHtml(docTitle(d))}</h3>
-                        <span class="text-[11px] text-stone-400 shrink-0">${fmtDate(d.updatedAt)}</span>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-[11px] text-stone-400">${fmtDate(d.updatedAt)}</span>
+                            <button type="button" onclick="copyShareLink('${shareUrl(d.id)}', event)" class="text-stone-400 hover:text-teal-600" title="공유 링크 복사"><i class="fa-solid fa-share-nodes text-sm"></i></button>
+                        </div>
                     </div>
-                </button>`;
+                </div>`;
             })
             .join("");
         empty.classList.toggle("hidden", filtered.length > 0);
@@ -110,7 +127,15 @@
 
     window.showDocList = function () {
         currentId = null;
+        pendingDocId = null;
+        window.__currentDocId = null;
+        setUrl(null);
+        if (window.Comments) window.Comments.clear();
         showView("doc-list-view");
+    };
+
+    window.shareCurrentDoc = function (e) {
+        if (currentId) window.copyShareLink(shareUrl(currentId), e);
     };
 
     window.openDoc = function (id) {
@@ -120,11 +145,13 @@
         if (!d) return;
         currentId = id;
         window.__currentDocId = id;
+        setUrl(id);
         document.getElementById("doc-detail-title").textContent = docTitle(d);
         document.getElementById("doc-detail-meta").textContent = d.updatedAt ? "수정: " + fmtDate(d.updatedAt) : "";
         document.getElementById("doc-detail-body").innerHTML = renderMarkdown(d.body);
         document.getElementById("doc-detail-admin").classList.toggle("hidden", !isAdmin());
         showView("doc-detail-view");
+        if (window.Comments) window.Comments.setTarget(type + ":" + id);
         window.scrollTo(0, 0);
     };
 
@@ -220,6 +247,13 @@
                         docs.push(d.data());
                     });
                     renderList();
+                    // deep link: ?doc=id → open that document once data is available
+                    if (pendingDocId && docs.some(function (x) { return x.id === pendingDocId; })) {
+                        const target = pendingDocId;
+                        pendingDocId = null;
+                        window.openDoc(target);
+                        return;
+                    }
                     // if a detail is open, refresh it
                     if (currentId && !document.getElementById("doc-detail-view").classList.contains("hidden")) {
                         const still = docs.find(function (x) {
@@ -242,9 +276,10 @@
         if (addBtn) addBtn.innerHTML = `<i class="fa-solid fa-plus"></i> 새 ${CFG.singular}`;
         document.getElementById("doc-search").placeholder = CFG.singular + " 제목 검색";
         renderList();
+        startListener(); // 열람은 로그인 없이도 가능
         if (typeof window.onAuthChange !== "function") return;
-        window.onAuthChange(function (user) {
-            if (user) startListener();
+        window.onAuthChange(function () {
+            startListener();
             renderList();
             document.getElementById("doc-detail-admin").classList.toggle("hidden", !isAdmin());
         });

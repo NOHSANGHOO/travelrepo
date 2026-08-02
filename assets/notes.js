@@ -116,9 +116,10 @@
     };
 
     document.addEventListener("DOMContentLoaded", function () {
+        startNotesListener(); // 열람은 로그인 없이도 가능
         if (typeof window.onAuthChange !== "function") return;
-        window.onAuthChange(function (user) {
-            if (user) startNotesListener();
+        window.onAuthChange(function () {
+            startNotesListener();
             renderAllSlots();
         });
     });

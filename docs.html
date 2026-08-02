@@ -44,7 +44,7 @@
 </head>
 <body class="pb-20">
 
-    <div id="access-gate" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
+    <div id="access-gate" style="display:none;" class="fixed inset-0 z-[100] bg-stone-900 flex items-center justify-center p-6">
         <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
             <i class="fa-solid fa-lock text-3xl text-stone-400 mb-3"></i>
             <h2 class="font-bold text-stone-800 mb-1">로그인이 필요합니다</h2>
@@ -61,7 +61,7 @@
         <div class="flex justify-between items-center mb-2">
             <a href="index.html" class="text-stone-300 hover:text-white text-xs inline-flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> Teo's space</a>
             <div class="relative">
-                <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인 필요"><i id="admin-login-icon" class="fa-solid fa-lock"></i></button>
+                <button id="profile-btn" type="button" onclick="onProfileClick(event)" class="text-stone-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10" title="로그인"><i id="admin-login-icon" class="fa-solid fa-arrow-right-to-bracket"></i></button>
                 <div id="profile-popover" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-stone-100 p-3 text-left z-[80]">
                     <p class="text-[11px] text-stone-400 mb-0.5">로그인 계정</p>
                     <p id="profile-email" class="text-sm font-medium text-stone-800 break-all"></p>
@@ -93,14 +93,18 @@
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
                 <div class="flex justify-between items-start gap-2 mb-1">
                     <h2 id="doc-detail-title" class="text-xl font-bold text-stone-800"></h2>
-                    <div id="doc-detail-admin" class="hidden flex gap-3 shrink-0 pt-1">
-                        <button type="button" onclick="openDocEditor(currentDocId())" class="text-stone-400 hover:text-stone-700"><i class="fa-solid fa-pen text-sm"></i></button>
-                        <button type="button" onclick="deleteDoc()" class="text-stone-400 hover:text-rose-600"><i class="fa-solid fa-trash text-sm"></i></button>
+                    <div class="flex gap-3 shrink-0 pt-1 items-center">
+                        <button type="button" onclick="shareCurrentDoc(event)" class="text-stone-400 hover:text-teal-600" title="공유 링크 복사"><i class="fa-solid fa-share-nodes text-sm"></i></button>
+                        <div id="doc-detail-admin" class="hidden flex gap-3">
+                            <button type="button" onclick="openDocEditor(currentDocId())" class="text-stone-400 hover:text-stone-700"><i class="fa-solid fa-pen text-sm"></i></button>
+                            <button type="button" onclick="deleteDoc()" class="text-stone-400 hover:text-rose-600"><i class="fa-solid fa-trash text-sm"></i></button>
+                        </div>
                     </div>
                 </div>
                 <p id="doc-detail-meta" class="text-[11px] text-stone-400 mb-4"></p>
                 <div id="doc-detail-body" class="md-body"></div>
             </div>
+            <div id="comments-root" class="mt-4"></div>
         </div>
 
         <!-- Editor view -->
@@ -134,6 +138,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="assets/firebase-config.js"></script>
     <script src="assets/auth.js"></script>
+    <script src="assets/comments.js"></script>
     <script src="assets/docs.js"></script>
 </body>
 </html>

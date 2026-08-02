@@ -35,17 +35,12 @@
     }
 
     function handleAuthState(user) {
+        // 열람은 로그인 없이도 가능합니다. 게이트로 화면을 막지 않습니다.
         const gate = document.getElementById("access-gate");
-        if (user) {
-            if (gate) gate.style.display = "none";
-            document.body.style.overflow = "";
-            if (analytics) {
-                analytics.setUserId(emailPrefix(user.email));
-                analytics.logEvent("login", { user_prefix: emailPrefix(user.email) });
-            }
-        } else {
-            if (gate) gate.style.display = "";
-            document.body.style.overflow = "hidden";
+        if (gate) gate.style.display = "none";
+        if (user && analytics) {
+            analytics.setUserId(emailPrefix(user.email));
+            analytics.logEvent("login", { user_prefix: emailPrefix(user.email) });
         }
         updateLoginUI(user);
         authListeners.forEach(function (cb) {
@@ -58,19 +53,25 @@
         if (icon) {
             const btn = icon.closest("button");
             if (user) {
-                icon.classList.remove("fa-lock");
-                icon.classList.add("fa-circle-user");
-                if (btn) btn.title = emailPrefix(user.email) + " (클릭하여 계정 정보)";
+                icon.classList.remove("fa-lock", "fa-arrow-right-to-bracket", "text-stone-300");
+                icon.classList.add("fa-circle-user", "text-emerald-300");
+                if (btn) {
+                    btn.title = emailPrefix(user.email) + " (계정 정보)";
+                    btn.classList.add("ring-1", "ring-emerald-400/50", "bg-white/5");
+                }
             } else {
-                icon.classList.remove("fa-circle-user");
-                icon.classList.add("fa-lock");
-                if (btn) btn.title = "로그인 필요";
+                icon.classList.remove("fa-circle-user", "fa-lock", "text-emerald-300");
+                icon.classList.add("fa-arrow-right-to-bracket");
+                if (btn) {
+                    btn.title = "로그인";
+                    btn.classList.remove("ring-1", "ring-emerald-400/50", "bg-white/5");
+                }
             }
         }
         const emailEl = document.getElementById("profile-email");
         if (emailEl && user) emailEl.textContent = user.email || "";
         const roleEl = document.getElementById("profile-role");
-        if (roleEl && user) roleEl.textContent = window.isAdmin() ? "관리자 · 편집 가능" : "뷰어 · 읽기 전용";
+        if (roleEl && user) roleEl.textContent = window.isAdmin() ? "관리자 · 편집 가능" : "뷰어 · 읽기/댓글 가능";
         if (!user) hideProfile();
     }
 
@@ -121,7 +122,62 @@
         auth.signInWithPopup(provider).catch(function (err) {
             console.error(err);
             if (errorEl) errorEl.textContent = "로그인에 실패했습니다. 다시 시도해주세요.";
+            window.showToast("로그인에 실패했어요. 다시 시도해주세요.");
         });
+    };
+
+    // ---- Shared toast + copy-to-clipboard helpers (available on all pages) ----
+    window.showToast = function (msg) {
+        let t = document.getElementById("app-toast");
+        if (!t) {
+            t = document.createElement("div");
+            t.id = "app-toast";
+            t.style.cssText =
+                "position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);background:#292524;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:opacity .2s ease,transform .2s ease;box-shadow:0 6px 22px rgba(0,0,0,.28);pointer-events:none;max-width:90vw;text-align:center;";
+            document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        requestAnimationFrame(function () {
+            t.style.opacity = "1";
+            t.style.transform = "translateX(-50%) translateY(0)";
+        });
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function () {
+            t.style.opacity = "0";
+            t.style.transform = "translateX(-50%) translateY(20px)";
+        }, 1800);
+    };
+
+    window.copyShareLink = function (url, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const done = function () {
+            window.showToast("URL이 복사되었습니다");
+        };
+        const fallback = function () {
+            try {
+                const ta = document.createElement("textarea");
+                ta.value = url;
+                ta.style.position = "fixed";
+                ta.style.opacity = "0";
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+                done();
+            } catch (err) {
+                console.error(err);
+                window.showToast("복사에 실패했어요");
+            }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(fallback);
+        } else {
+            fallback();
+        }
     };
 
     window.toggleLogin = function () {
