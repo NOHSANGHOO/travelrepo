@@ -56,7 +56,7 @@
         if (!el) return;
         el.innerHTML = `
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
-                <h3 class="font-bold text-stone-800 mb-3 text-sm"><i class="fa-regular fa-comments mr-1 text-teal-600"></i>의견 <span id="cm-count" class="text-stone-400 font-normal"></span></h3>
+                <h3 class="font-bold text-stone-800 mb-3 text-sm"><i class="fa-regular fa-comments mr-1 text-teal-600"></i>댓글 <span id="cm-count" class="text-stone-400 font-normal"></span></h3>
                 <div id="cm-list" class="space-y-3 mb-3"></div>
                 <div id="cm-compose"></div>
             </div>`;
@@ -69,11 +69,11 @@
         if (!el) return;
         const u = currentUser();
         if (!u) {
-            el.innerHTML = `<button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 text-sm font-medium transition"><i class="fa-brands fa-google mr-1"></i> 로그인하고 의견 남기기</button>`;
+            el.innerHTML = `<button type="button" onclick="gateSignIn()" class="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 text-sm font-medium transition"><i class="fa-brands fa-google mr-1"></i> 로그인하고 댓글 남기기</button>`;
             return;
         }
         el.innerHTML = `
-            <textarea id="cm-input" rows="2" class="w-full border border-stone-200 rounded-lg p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="${esc(nameOf(u))}님, 의견을 남겨보세요"></textarea>
+            <textarea id="cm-input" rows="2" class="w-full border border-stone-200 rounded-lg p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="${esc(nameOf(u))}님, 댓글을 남겨보세요"></textarea>
             <div class="flex justify-end mt-2">
                 <button type="button" onclick="Comments.post()" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition active:scale-95">등록</button>
             </div>`;
@@ -90,7 +90,7 @@
         const countEl = document.getElementById("cm-count");
         if (countEl) countEl.textContent = sorted.length ? "(" + sorted.length + ")" : "";
         if (!sorted.length) {
-            listEl.innerHTML = `<p class="text-xs text-stone-400 py-1">아직 의견이 없어요. 처음으로 남겨보세요!</p>`;
+            listEl.innerHTML = `<p class="text-xs text-stone-400 py-1">아직 댓글이 없어요. 처음으로 남겨보세요!</p>`;
             return;
         }
         listEl.innerHTML = sorted
@@ -220,7 +220,7 @@
                 });
         },
         remove: function (id) {
-            if (!confirm("이 의견을 삭제할까요?")) return;
+            if (!confirm("이 댓글을 삭제할까요?")) return;
             db()
                 .collection("comments")
                 .doc(id)
