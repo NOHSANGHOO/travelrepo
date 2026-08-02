@@ -23,6 +23,10 @@ function formatDateRange(trip) {
     return `${trip.startDate.slice(0, 4)}.${fmt(trip.startDate)} - ${fmt(trip.endDate)}`;
 }
 
+function shareUrlOf(trip) {
+    return new URL("trip.html?id=" + encodeURIComponent(trip.id), location.href).href;
+}
+
 function canViewTrip(trip) {
     if (window.isAdmin && window.isAdmin()) return true;
     const end = new Date(trip.endDate + "T23:59:59");
@@ -68,9 +72,12 @@ function renderTrips(filterKey) {
                     <span class="shrink-0 text-xs font-bold px-2 py-1 rounded-full ${status.class}">${status.label}</span>
                 </div>
                 <p class="text-sm text-stone-500 mb-2">${trip.subtitle || ""}</p>
-                <div class="flex items-center text-xs text-stone-400 gap-3">
-                    <span><i class="fa-solid fa-location-dot mr-1"></i>${trip.location || ""}</span>
-                    <span><i class="fa-regular fa-calendar mr-1"></i>${formatDateRange(trip)}</span>
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center text-xs text-stone-400 gap-3 min-w-0">
+                        <span class="truncate"><i class="fa-solid fa-location-dot mr-1"></i>${trip.location || ""}</span>
+                        <span class="shrink-0"><i class="fa-regular fa-calendar mr-1"></i>${formatDateRange(trip)}</span>
+                    </div>
+                    <button type="button" onclick="copyShareLink('${shareUrlOf(trip)}', event)" class="shrink-0 text-stone-400 hover:text-teal-600 w-7 h-7 flex items-center justify-center rounded-full hover:bg-stone-100" title="공유 링크 복사"><i class="fa-solid fa-share-nodes text-sm"></i></button>
                 </div>
                 ${viewable ? "" : `<p class="text-xs text-stone-400 mt-2"><i class="fa-solid fa-hourglass-half mr-1"></i>여행이 끝나면 볼 수 있어요</p>`}
             </div>
@@ -180,10 +187,12 @@ function updateAdminUI() {
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof DEFAULT_TRIPS !== "undefined") currentTrips = DEFAULT_TRIPS.slice();
     switchFilter("all");
+    if (window.TripsStore) window.TripsStore.start(); // 열람은 로그인 없이도 가능
     if (typeof window.onAuthChange === "function") {
-        window.onAuthChange(function (user) {
+        window.onAuthChange(function () {
             updateAdminUI();
-            if (user && window.TripsStore) window.TripsStore.start();
+            if (window.TripsStore) window.TripsStore.start();
+            renderTrips(currentFilter);
         });
     }
     if (window.TripsStore) {

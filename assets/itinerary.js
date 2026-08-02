@@ -486,9 +486,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         populatePresetSelect();
         renderAllDays();
+        startItineraryListener(); // 열람은 로그인 없이도 가능
         if (typeof window.onAuthChange !== "function") return;
-        window.onAuthChange(function (user) {
-            if (user) startItineraryListener();
+        window.onAuthChange(function () {
+            startItineraryListener();
             renderAllDays();
         });
     });
