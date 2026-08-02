@@ -124,7 +124,7 @@
 
     function showNotFound() {
         document.getElementById("trip-header-body").innerHTML = `<h1 class="text-xl font-bold">여행을 찾을 수 없어요</h1>`;
-        document.getElementById("trip-days").innerHTML = `<p class="text-sm text-stone-500 mt-6 text-center">주소가 잘못되었거나 삭제된 여행입니다. <a href="index.html" class="text-teal-600 underline">목록으로</a></p>`;
+        document.getElementById("trip-days").innerHTML = `<p class="text-sm text-stone-500 mt-6 text-center">주소가 잘못되었거나 삭제된 여행입니다. <a href="trips.html" class="text-teal-600 underline">목록으로</a></p>`;
     }
 
     function onTrips(list) {
@@ -254,7 +254,7 @@
         if (!confirm("이 여행 전체(일정·메모·상세정보 포함)를 삭제할까요? 되돌릴 수 없습니다.")) return;
         window.TripsStore.remove(TRIP_ID)
             .then(function () {
-                window.location.href = "index.html";
+                window.location.href = "trips.html";
             })
             .catch(function (err) {
                 alert("삭제 실패. 다시 시도해주세요.");
