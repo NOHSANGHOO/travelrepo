@@ -43,8 +43,15 @@
         return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
     }
 
-    function nameOf(u) {
-        return u.displayName || (u.email ? u.email.split("@")[0] : "익명");
+    // 표시 이름 대신 로그인 아이디(이메일 @ 앞부분)를 씁니다.
+    function idOf(u) {
+        return (u && u.email ? u.email.split("@")[0] : "") || "익명";
+    }
+
+    // 저장된 댓글에서 표시할 아이디: email이 있으면 그 앞부분, 없으면 예전 name 값.
+    function displayId(c) {
+        if (c.email) return c.email.split("@")[0];
+        return c.name || "익명";
     }
 
     function root() {
@@ -73,7 +80,7 @@
             return;
         }
         el.innerHTML = `
-            <textarea id="cm-input" rows="2" class="w-full border border-stone-200 rounded-lg p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="${esc(nameOf(u))}님, 댓글을 남겨보세요"></textarea>
+            <textarea id="cm-input" rows="2" class="w-full border border-stone-200 rounded-lg p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="${esc(idOf(u))}님, 댓글을 남겨보세요"></textarea>
             <div class="flex justify-end mt-2">
                 <button type="button" onclick="Comments.post()" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition active:scale-95">등록</button>
             </div>`;
@@ -109,7 +116,7 @@
                 }
                 return `<div class="border border-stone-100 rounded-xl p-3">
                     <div class="flex items-center justify-between gap-2 mb-1">
-                        <span class="text-xs font-semibold text-stone-700 truncate">${esc(c.name || "익명")}</span>
+                        <span class="text-xs font-semibold text-stone-700 truncate">${esc(displayId(c))}</span>
                         <div class="flex items-center gap-2 shrink-0">
                             <span class="text-[11px] text-stone-400">${fmt(c.updatedAt || c.createdAt)}${c.edited ? " · 수정됨" : ""}</span>
                             ${canEdit ? `<button type="button" onclick="Comments.startEdit('${c.id}')" class="text-stone-400 hover:text-stone-700" title="수정"><i class="fa-solid fa-pen text-[11px]"></i></button>` : ""}
@@ -185,7 +192,7 @@
             db()
                 .collection("comments")
                 .doc(id)
-                .set({ id: id, target: target, uid: u.uid, name: nameOf(u), email: u.email || "", text: text, createdAt: now, updatedAt: now })
+                .set({ id: id, target: target, uid: u.uid, name: idOf(u), email: u.email || "", text: text, createdAt: now, updatedAt: now })
                 .catch(function (err) {
                     console.error(err);
                     window.showToast("등록에 실패했어요.");
