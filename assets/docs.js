@@ -109,6 +109,17 @@
         });
     }
 
+    function ratingLine(d) {
+        if (!window.Ratings) return "";
+        const s = window.Ratings.summary(type + ":" + d.id);
+        const admin = typeof d.adminRating === "number" ? d.adminRating : 0;
+        if (!admin && !s.count) return "";
+        const parts = [];
+        if (admin) parts.push(`${window.Ratings.starsHtml(admin, "0.75rem")}<span class="text-[11px] text-stone-500 tabular-nums">${admin.toFixed(1)}</span>`);
+        if (s.count) parts.push(`<span class="text-[11px] text-stone-400">방문자 ${s.avg.toFixed(1)} (${s.count})</span>`);
+        return `<div class="flex items-center gap-2 mt-1">${parts.join("")}</div>`;
+    }
+
     function cardHtml(d) {
         const grip = IS_RECIPE && isAdmin()
             ? `<span class="doc-grip shrink-0 text-stone-300 hover:text-stone-500 px-1 -ml-1 cursor-grab" data-id="${d.id}" title="드래그하여 카테고리 이동"><i class="fa-solid fa-grip-vertical"></i></span>`
@@ -118,6 +129,7 @@
                 ${grip}
                 <button type="button" onclick="openDoc('${d.id}')" class="flex-1 min-w-0 text-left">
                     <h3 class="font-bold text-stone-800 truncate">${escapeHtml(docTitle(d))}</h3>
+                    ${ratingLine(d)}
                 </button>
                 <span class="text-[11px] text-stone-400 shrink-0">${fmtDate(d.updatedAt)}</span>
                 <button type="button" onclick="copyShareLink('${shareUrl(d.id)}', event)" class="text-stone-400 hover:text-teal-600 shrink-0" title="공유 링크 복사"><i class="fa-solid fa-share-nodes text-sm"></i></button>
@@ -222,6 +234,7 @@
         window.__currentDocId = null;
         setUrl(null);
         if (window.Comments) window.Comments.clear();
+        if (window.Ratings) window.Ratings.clearTarget();
         showView("doc-list-view");
     };
 
@@ -243,6 +256,14 @@
         document.getElementById("doc-detail-admin").classList.toggle("hidden", !isAdmin());
         showView("doc-detail-view");
         if (window.Comments) window.Comments.setTarget(type + ":" + id);
+        if (window.Ratings) {
+            window.Ratings.setTarget({
+                target: type + ":" + id,
+                collection: COL,
+                docId: id,
+                adminRating: typeof d.adminRating === "number" ? d.adminRating : 0
+            });
+        }
         window.scrollTo(0, 0);
     };
 
@@ -494,6 +515,7 @@
         document.getElementById("doc-search").placeholder = CFG.singular + " 제목 검색";
         const listEl = document.getElementById("doc-list");
         if (listEl && IS_RECIPE) listEl.addEventListener("pointerdown", pointerDown);
+        if (window.Ratings) window.Ratings.onChange(renderList);
         renderList();
         startListener(); // 열람은 로그인 없이도 가능
         if (typeof window.onAuthChange !== "function") return;

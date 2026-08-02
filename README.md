@@ -74,6 +74,16 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
 - **여행**: 목록의 각 카드와 여행 상세 페이지 헤더 모두에 공유 버튼이 있습니다. 복사되는 주소는 `trip.html?id=여행id`입니다.
 - **레시피/기타**: 문서 목록의 각 항목과 문서 상세 화면 모두에 공유 버튼이 있습니다. 복사되는 주소는 `docs.html?type=recipe&doc=문서id` 형태이며, 이 링크로 접속하면 해당 문서가 바로 열립니다.
 
+## 별점
+
+여행 상세 페이지와 각 레시피/기타 문서 하단에 **별점** 영역이 있습니다. 별 1~5개를 **0.5개 단위**로 매깁니다 (별 왼쪽 절반을 누르면 `.5`, 오른쪽 절반을 누르면 정수).
+
+- **관리자 별점**: 관리자가 매기는 등급입니다. 언제든 다시 눌러 수정하거나 "지우기"로 없앨 수 있습니다. 원본 문서(`trips`/`recipes`/`memos`)의 **`adminRating` 필드**로 저장됩니다.
+- **방문자 평균**: 로그인한 일반 사용자들이 남긴 별점의 평균을 소수 첫째 자리까지 표시합니다 (예: `4.6 (5명)`). 한 사람당 하나만 반영되고, 다시 누르면 자기 점수가 갱신됩니다.
+- 관리자가 별점 위젯을 조작하면 **관리자 별점**이, 일반 사용자가 조작하면 **본인 별점**이 저장됩니다. 로그인 전에는 "로그인하고 별점 남기기" 버튼만 보입니다.
+- 뷰어 별점은 Firestore `ratings` 컬렉션에 사용자별 문서(`<target>__<uid>`)로 저장되어, 각자 자기 별점만 수정할 수 있습니다. 대상 구분은 댓글과 같은 `trip:여행id` / `recipe:문서id` / `misc:문서id` 형식입니다.
+- 여행 목록과 레시피 목록 카드에도 관리자 별점과 방문자 평균이 요약 표시됩니다.
+
 ## 댓글
 
 여행 상세 페이지 하단과 각 레시피/기타 문서 하단에 **댓글** 영역이 있습니다.
@@ -149,11 +159,20 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
          allow delete: if request.auth != null
                        && (resource.data.uid == request.auth.uid || isAdmin());
        }
+       match /ratings/{ratingId} {
+         allow read: if true;
+         allow create: if request.auth != null
+                       && request.resource.data.uid == request.auth.uid;
+         allow update: if request.auth != null
+                       && resource.data.uid == request.auth.uid;
+         allow delete: if request.auth != null
+                       && (resource.data.uid == request.auth.uid || isAdmin());
+       }
      }
    }
    ```
 
-   (**읽기는 로그인 없이 누구나 허용**, 쓰기는 관리자 이메일 2개만 허용. `trips`는 여행 목록/메타, `notes`는 일정 카드 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터, `recipes`는 레시피, `memos`는 기타 메모입니다. `comments`(댓글)는 **로그인한 사람이면 누구나 작성**할 수 있고, **본인 글만 수정**, 삭제는 본인 또는 관리자만 가능합니다.)
+   (**읽기는 로그인 없이 누구나 허용**, 쓰기는 관리자 이메일 2개만 허용. `trips`는 여행 목록/메타, `notes`는 일정 카드 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터, `recipes`는 레시피, `memos`는 기타 메모입니다. `comments`(댓글)와 `ratings`(뷰어 별점)는 **로그인한 사람이면 누구나 작성**할 수 있고, **본인 것만 수정**, 삭제는 본인 또는 관리자만 가능합니다.)
 
 4. 왼쪽 메뉴에서 **보안 → Authentication → 시작하기 → Sign-in method** 탭 → **Google** 사용 설정
 5. 같은 화면(Authentication) → **Settings 탭 → Authorized domains** → **도메인 추가** → `nohsanghoo.github.io` 입력하고 추가 (이 목록에 없는 도메인에서는 구글 로그인 팝업이 차단되어 실패합니다)

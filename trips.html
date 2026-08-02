@@ -25,6 +25,10 @@
         button:not(:disabled), a { transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease; }
         button:not(:disabled):active { transform: scale(0.96); }
         #trip-list > a:active { transform: scale(0.985); }
+        /* Star ratings */
+        .rt-stars { position: relative; display: inline-block; line-height: 1; white-space: nowrap; }
+        .rt-stars .rt-base { color: #e2ddd4; letter-spacing: 1px; }
+        .rt-stars .rt-fill { position: absolute; left: 0; top: 0; overflow: hidden; color: #f0b429; letter-spacing: 1px; transition: width 0.22s cubic-bezier(0.22,1,0.36,1); }
     </style>
 </head>
 <body class="pb-20">
@@ -114,6 +118,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="assets/firebase-config.js"></script>
     <script src="assets/auth.js"></script>
+    <script src="assets/ratings.js"></script>
     <script src="assets/trips-data.js"></script>
     <script src="assets/trips-store.js"></script>
     <script src="assets/site.js"></script>
