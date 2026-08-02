@@ -143,7 +143,7 @@
                         renderList();
                     },
                     function (err) {
-                        console.error("의견을 불러오지 못했습니다.", err);
+                        console.error("댓글을 불러오지 못했습니다.", err);
                     }
                 );
         } catch (e) {
