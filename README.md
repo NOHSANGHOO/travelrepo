@@ -1,13 +1,22 @@
-# travelrepo
+# travelrepo — Teo's space
 
-가족 여행 일정을 모아보는 정적 웹사이트입니다. 여러 개의 여행을 목록에서 탐색하고, 각 여행의 일자별 일정과 상세 정보를 확인할 수 있습니다. **여행 목록·일정·상세정보·메모가 모두 Firebase(Firestore)에서 읽어와 표시**되며, 관리자는 화면에서 직접 여행을 만들고 편집합니다. 사이트 열람에는 구글 로그인이 필요합니다.
+**Teo's space**는 여행계획·레시피·기타 메모를 한 곳에서 보관하는 정적 웹사이트입니다. 첫 화면(`index.html`)에서 세 가지 카테고리로 나뉩니다.
+
+- **여행계획**(`trips.html`): 여러 여행을 목록에서 탐색하고, 각 여행의 일자별 일정과 상세 정보를 확인/편집합니다.
+- **레시피**(`docs.html?type=recipe`): 요리 레시피를 마크다운으로 저장하고 렌더링해서 봅니다. 제목 검색 지원.
+- **기타**(`docs.html?type=misc`): 자유로운 마크다운 메모장.
+
+**모든 데이터(여행 목록·일정·상세정보·메모·레시피·기타)가 Firebase(Firestore)에서 읽어와 표시**되며, 관리자는 화면에서 직접 만들고 편집합니다. 사이트 열람에는 구글 로그인이 필요합니다.
 
 ## 구조 (Firebase-driven)
 
-여행 하나당 HTML 파일을 두지 않습니다. **범용 상세 페이지 `trip.html?id=여행id` 하나**가 URL의 id로 해당 여행 데이터를 Firestore에서 읽어 화면을 동적으로 구성합니다.
+여행 하나당 HTML 파일을 두지 않습니다. **범용 상세 페이지 `trip.html?id=여행id` 하나**가 URL의 id로 해당 여행 데이터를 Firestore에서 읽어 화면을 동적으로 구성합니다. 레시피/기타도 **범용 문서 페이지 `docs.html?type=recipe|misc` 하나**가 처리합니다.
 
 ```
-index.html               여행 목록(첫 화면) — Firestore `trips` 컬렉션을 읽어 렌더링
+index.html               Teo's space 홈 — 여행계획/레시피/기타 3개 카테고리 진입
+trips.html               여행 목록 — Firestore `trips` 컬렉션을 읽어 렌더링
+docs.html                범용 마크다운 문서 페이지 (?type=recipe → 레시피, ?type=misc → 기타)
+assets/docs.js           레시피/기타 문서 목록·검색·편집·삭제 (마크다운 렌더링, 공용)
 trip.html                범용 여행 상세 페이지 (?id=여행id 로 어떤 여행이든 표시)
 assets/trips-data.js     여행 목록 기본(시드) 데이터 (Firestore가 비었을 때만 사용)
 assets/trips-store.js    Firestore `trips` 컬렉션 구독/생성/수정/삭제 + 시딩 (공용)
@@ -25,7 +34,7 @@ trips/kobe-arima-2026.html  (레거시) 기존 주소를 trip.html?id=kobe-arima
 .github/workflows/pages.yml  GitHub Pages 자동 배포 워크플로우
 ```
 
-Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드), `tripinfo`(상세 정보 탭), `notes`(메모). 모두 문서 id = 여행 id.
+Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드), `tripinfo`(상세 정보 탭), `notes`(일정 카드 메모) — 이 네 개는 문서 id = 여행 id. 그리고 `recipes`(레시피), `memos`(기타 메모) — 문서 id = 자동 생성 id.
 
 ## 새 여행 추가하는 법 (파일 불필요)
 
@@ -104,11 +113,19 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
          allow read: if request.auth != null;
          allow write: if isAdmin();
        }
+       match /recipes/{docId} {
+         allow read: if request.auth != null;
+         allow write: if isAdmin();
+       }
+       match /memos/{docId} {
+         allow read: if request.auth != null;
+         allow write: if isAdmin();
+       }
      }
    }
    ```
 
-   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용. `trips`는 여행 목록/메타, `notes`는 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터입니다.)
+   (읽기는 로그인한 사람 전체 허용, 쓰기는 관리자 이메일 2개만 허용. `trips`는 여행 목록/메타, `notes`는 일정 카드 메모, `itineraries`는 일정 카드, `tripinfo`는 상세 정보 탭 데이터, `recipes`는 레시피, `memos`는 기타 메모입니다.)
 
 4. 왼쪽 메뉴에서 **보안 → Authentication → 시작하기 → Sign-in method** 탭 → **Google** 사용 설정
 5. 같은 화면(Authentication) → **Settings 탭 → Authorized domains** → **도메인 추가** → `nohsanghoo.github.io` 입력하고 추가 (이 목록에 없는 도메인에서는 구글 로그인 팝업이 차단되어 실패합니다)
@@ -181,6 +198,17 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
 - 아래 **"도보 경로 보기"** 버튼은 그날 장소들을 순서대로 연결한 구글지도 길찾기를 **도보 모드**로 엽니다.
 - 장소를 **URL**로 넣은 카드는 목록에서 개별로 열 수 있지만, 도보 경로선에는 포함되지 않습니다(좌표를 알 수 없어서). 경로선에 넣으려면 장소명(구글지도 검색어)으로 입력하세요.
 - 더 깔끔한 "번호 핀 지도"(앱 내 이미지/인터랙티브 지도)가 필요하면 Static Maps API 또는 Leaflet 방식으로 업그레이드할 수 있습니다.
+
+## 레시피 · 기타 (마크다운 문서)
+
+Teo's space 홈에서 **레시피**와 **기타**는 같은 페이지(`docs.html`)가 `?type` 값으로 나눠 처리합니다. 둘 다 **마크다운으로 작성하면 렌더링해서 보여주는** 문서 보관함입니다.
+
+- **레시피**(`docs.html?type=recipe`, Firestore `recipes` 컬렉션): 요리 레시피를 마크다운으로 저장합니다. 새 레시피를 만들 때 재료/만드는 법 골격이 미리 채워집니다.
+- **기타**(`docs.html?type=misc`, Firestore `memos` 컬렉션): 형식 제약 없는 마크다운 메모장입니다.
+- **읽기**: 로그인한 사람이면 누구나 목록과 내용을 볼 수 있습니다.
+- **쓰기**(관리자 전용): 목록 상단의 "새 항목" 버튼으로 추가하고, 상세 화면의 연필/휴지통 아이콘으로 수정·삭제합니다. 편집 화면에서 "미리보기"로 렌더링 결과를 바로 확인할 수 있습니다.
+- **제목 검색**: 목록 상단 검색창에 입력하면 제목으로 실시간 필터링됩니다. 제목을 따로 비워두면 본문 첫 번째 머리말(`#`)을 제목으로 씁니다.
+- 목록은 최근 수정순으로 정렬됩니다. 마크다운은 `marked`로 렌더링하고 `DOMPurify`로 정제(sanitize)해 안전하게 표시합니다.
 
 ## Google Analytics(GA4) 로그인 이벤트
 
