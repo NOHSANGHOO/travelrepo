@@ -27,6 +27,17 @@ function shareUrlOf(trip) {
     return new URL("trip.html?id=" + encodeURIComponent(trip.id), location.href).href;
 }
 
+function tripRatingLine(trip) {
+    if (!window.Ratings) return "";
+    const s = window.Ratings.summary("trip:" + trip.id);
+    const admin = typeof trip.adminRating === "number" ? trip.adminRating : 0;
+    if (!admin && !s.count) return "";
+    const parts = [];
+    if (admin) parts.push(`${window.Ratings.starsHtml(admin, "0.75rem")}<span class="text-[11px] text-stone-500 tabular-nums">${admin.toFixed(1)}</span>`);
+    if (s.count) parts.push(`<span class="text-[11px] text-stone-400">방문자 ${s.avg.toFixed(1)} (${s.count})</span>`);
+    return `<div class="flex items-center gap-2 mb-2">${parts.join("")}</div>`;
+}
+
 function canViewTrip(trip) {
     if (window.isAdmin && window.isAdmin()) return true;
     const end = new Date(trip.endDate + "T23:59:59");
@@ -72,6 +83,7 @@ function renderTrips(filterKey) {
                     <span class="shrink-0 text-xs font-bold px-2 py-1 rounded-full ${status.class}">${status.label}</span>
                 </div>
                 <p class="text-sm text-stone-500 mb-2">${trip.subtitle || ""}</p>
+                ${tripRatingLine(trip)}
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center text-xs text-stone-400 gap-3 min-w-0">
                         <span class="truncate"><i class="fa-solid fa-location-dot mr-1"></i>${trip.location || ""}</span>
@@ -188,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof DEFAULT_TRIPS !== "undefined") currentTrips = DEFAULT_TRIPS.slice();
     switchFilter("all");
     if (window.TripsStore) window.TripsStore.start(); // 열람은 로그인 없이도 가능
+    if (window.Ratings) window.Ratings.onChange(function () { renderTrips(currentFilter); });
     if (typeof window.onAuthChange === "function") {
         window.onAuthChange(function () {
             updateAdminUI();

@@ -43,6 +43,17 @@
         body.dragging-active, body.dragging-active * { cursor: grabbing !important; }
         .tab-btn { position: relative; }
         .note-btn, .map-btn, a { -webkit-tap-highlight-color: transparent; }
+        /* Star ratings */
+        .rt-stars { position: relative; display: inline-block; line-height: 1; white-space: nowrap; }
+        .rt-stars .rt-base { color: #e2ddd4; letter-spacing: 1px; }
+        .rt-stars .rt-fill { position: absolute; left: 0; top: 0; overflow: hidden; color: #f0b429; letter-spacing: 1px; transition: width 0.22s cubic-bezier(0.22,1,0.36,1); }
+        /* min-height keeps the half-star hit zones clickable even if the icon font fails to load */
+        .rt-picker { position: relative; display: inline-block; min-height: 1.5rem; }
+        .rt-picker .rt-zones { position: absolute; inset: 0; }
+        .rt-picker .rt-zone { position: absolute; top: 0; bottom: 0; width: 10%; background: transparent; border: 0; padding: 0; cursor: pointer; }
+        .rt-picker:hover .rt-fill { color: #e8a317; }
+        .rt-picker .rt-stars { transition: transform 0.14s cubic-bezier(0.22,1,0.36,1); }
+        .rt-picker:hover .rt-stars { transform: scale(1.06); }
     </style>
 </head>
 <body class="pb-20">
@@ -115,8 +126,9 @@
         </div>
     </main>
 
-    <!-- Comments (visible on all tabs) -->
-    <section id="comments-root" class="max-w-lg mx-auto px-4 pb-10 pt-1"></section>
+    <!-- Ratings + Comments (visible on all tabs) -->
+    <section id="ratings-root" class="max-w-lg mx-auto px-4 pt-1"></section>
+    <section id="comments-root" class="max-w-lg mx-auto px-4 pb-10 pt-3"></section>
 
     <!-- Note Modal -->
     <div id="note-modal" class="fixed inset-0 z-[60] hidden">
@@ -231,6 +243,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="assets/firebase-config.js"></script>
     <script src="assets/auth.js"></script>
+    <script src="assets/ratings.js"></script>
     <script src="assets/comments.js"></script>
     <script src="assets/trips-data.js"></script>
     <script src="assets/trips-store.js"></script>

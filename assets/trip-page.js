@@ -146,6 +146,14 @@
             commentsBound = true;
             window.Comments.setTarget("trip:" + TRIP_ID);
         }
+        if (window.Ratings && TRIP_ID) {
+            window.Ratings.setTarget({
+                target: "trip:" + TRIP_ID,
+                collection: "trips",
+                docId: TRIP_ID,
+                adminRating: typeof found.adminRating === "number" ? found.adminRating : 0
+            });
+        }
         buildStructure();
     }
 
