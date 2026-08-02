@@ -40,12 +40,32 @@
         .md-body th { background: #f0ebe2; }
         .md-body img { max-width: 100%; border-radius: 0.6rem; }
         .md-body hr { border: none; border-top: 1px solid #e7e2d8; margin: 1rem 0; }
-        /* Recipe categories: collapse + drag motion */
-        .cat-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.34s cubic-bezier(0.22,1,0.36,1), opacity 0.28s ease; }
-        .cat-chevron { transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); }
+        /* Recipe categories: one bordered container per category so its
+           recipes visually sit *inside* it */
+        .doc-cat { border: 1px solid #e7e0d5; border-left: 4px solid var(--cat, #7d8a7a);
+            border-radius: 1rem; overflow: hidden; background: #fbf8f3; }
+        .cat-header { width: 100%; background: #fff; border-bottom: 1px solid transparent;
+            transition: background-color 0.18s ease, border-color 0.18s ease; cursor: pointer; }
+        .cat-header:hover { background: #fdfcfa; }
+        /* 카테고리 제목: 레시피 제목보다 확실히 크고 진하게 */
+        .cat-title { font-size: 1.0625rem; font-weight: 800; color: #2d2a26; letter-spacing: -0.01em; }
+        .cat-chevron { color: var(--cat, #7d8a7a); transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); }
         .cat-chevron.open { transform: rotate(90deg); }
-        .cat-header { transition: background-color 0.18s ease, transform 0.08s ease; }
-        .doc-card { transition: box-shadow 0.2s ease, transform 0.14s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease; }
+        .cat-count { font-size: 0.7rem; font-weight: 700; color: #fff; background: var(--cat, #7d8a7a);
+            min-width: 1.35rem; height: 1.35rem; padding: 0 0.4rem; border-radius: 9999px;
+            display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.9; }
+        .cat-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.34s cubic-bezier(0.22,1,0.36,1), opacity 0.28s ease; }
+        .doc-cat.open .cat-header { border-bottom-color: #eee7db; }
+        /* 카테고리 안쪽: 살짝 눌린 배경 + 들여쓰기로 소속감 */
+        .cat-list { padding: 0.7rem 0.7rem 0.7rem 1.15rem; display: flex; flex-direction: column; gap: 0.5rem; position: relative; }
+        .cat-list::before { content: ''; position: absolute; left: 0.5rem; top: 0.85rem; bottom: 0.85rem;
+            width: 2px; border-radius: 2px; background: var(--cat, #7d8a7a); opacity: 0.22; }
+        /* 카테고리 안의 레시피 카드는 더 작고 가볍게 → 헤더와 위계 구분 */
+        .cat-list .doc-card { border-radius: 0.75rem; padding: 0.7rem 0.85rem; box-shadow: none;
+            border: 1px solid #ece5da; background: #fff; }
+        .cat-list .doc-card:hover { border-color: #d9cfc0; box-shadow: 0 2px 8px rgba(80,60,40,0.07); }
+        .cat-list .doc-card h3 { font-size: 0.9rem; font-weight: 600; }
+        .doc-card { transition: box-shadow 0.2s ease, transform 0.14s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease, border-color 0.18s ease; }
         .doc-card-ghost { opacity: 0.4; transform: scale(0.98); }
         .doc-grip { touch-action: none; -webkit-tap-highlight-color: transparent; }
         .doc-drag-clone { position: fixed; z-index: 120; pointer-events: none; margin: 0 !important;

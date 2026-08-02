@@ -23,10 +23,10 @@
     // 레시피 전용: 카테고리(한식/양식/중식/기타)로 그룹화 + 접기/펼치기 + 드래그 이동
     const IS_RECIPE = type === "recipe";
     const RECIPE_CATS = [
-        { key: "korean", label: "한식", icon: "🍚" },
-        { key: "western", label: "양식", icon: "🍝" },
-        { key: "chinese", label: "중식", icon: "🥢" },
-        { key: "etc", label: "기타", icon: "🍽️" }
+        { key: "korean", label: "한식", icon: "🍚", color: "#b4553f" },
+        { key: "western", label: "양식", icon: "🍝", color: "#6f97b3" },
+        { key: "chinese", label: "중식", icon: "🥢", color: "#c98a3e" },
+        { key: "etc", label: "기타", icon: "🍽️", color: "#7d8a7a" }
     ];
     // 처음에는 모두 접혀있고 한식만 펼쳐진 상태
     const catCollapsed = { korean: false, western: true, chinese: true, etc: true };
@@ -172,17 +172,17 @@
             const open = searching ? true : !catCollapsed[c.key];
             const cards = items.length
                 ? items.map(cardHtml).join("")
-                : `<p class="doc-cat-empty text-xs text-stone-400 py-3 text-center">${IS_RECIPE && isAdmin() ? "여기로 드래그해 옮겨보세요" : "레시피가 없어요"}</p>`;
-            return `<section class="doc-cat" data-cat="${c.key}">
-                <button type="button" class="cat-header w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-white border border-stone-100 mb-2 active:scale-[0.99]" onclick="toggleCat('${c.key}')">
-                    <span class="flex items-center gap-2 font-bold text-stone-700 text-sm">
-                        <i class="cat-chevron fa-solid fa-chevron-right text-stone-400 text-xs ${open ? "open" : ""}"></i>
-                        <span>${c.icon} ${c.label}</span>
+                : `<p class="doc-cat-empty text-xs text-stone-400 py-4 text-center">${isAdmin() ? "여기로 드래그해 옮겨보세요" : "레시피가 없어요"}</p>`;
+            return `<section class="doc-cat${open ? " open" : ""}" data-cat="${c.key}" style="--cat:${c.color}">
+                <button type="button" class="cat-header w-full flex items-center justify-between gap-2 px-4 py-3.5" onclick="toggleCat('${c.key}')">
+                    <span class="flex items-center gap-2.5 min-w-0">
+                        <i class="cat-chevron fa-solid fa-chevron-right text-sm ${open ? "open" : ""}"></i>
+                        <span class="cat-title">${c.icon} ${c.label}</span>
                     </span>
-                    <span class="text-stone-400 font-normal text-xs">${items.length ? items.length + "개" : ""}</span>
+                    <span class="cat-count">${items.length}</span>
                 </button>
                 <div class="cat-body" id="cat-body-${c.key}">
-                    <div class="cat-list space-y-3 pb-2" data-cat="${c.key}">${cards}</div>
+                    <div class="cat-list" data-cat="${c.key}">${cards}</div>
                 </div>
             </section>`;
         }).join("");
@@ -217,6 +217,7 @@
         catCollapsed[key] = !catCollapsed[key];
         const sec = document.querySelector('.doc-cat[data-cat="' + key + '"]');
         if (sec) {
+            sec.classList.toggle("open", !catCollapsed[key]);
             const chev = sec.querySelector(".cat-chevron");
             if (chev) chev.classList.toggle("open", !catCollapsed[key]);
         }
@@ -431,6 +432,7 @@
                 // 접혀있는 목적지는 펼쳐 드롭 영역을 보여줌
                 if (!query.trim() && catCollapsed[cat]) {
                     catCollapsed[cat] = false;
+                    sec.classList.add("open");
                     const chev = sec.querySelector(".cat-chevron");
                     if (chev) chev.classList.add("open");
                     applyCatHeights();
