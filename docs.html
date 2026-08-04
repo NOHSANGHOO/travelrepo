@@ -75,6 +75,9 @@
         .doc-cat.drop-hover > .cat-header { background: #eef5f0; border-color: #c2d8ca; }
         body.doc-dragging-active { cursor: grabbing; user-select: none; -webkit-user-select: none; }
         body.doc-dragging-active * { cursor: grabbing !important; }
+        /* Editor placeholders (골격 예시는 실제 입력값이 아닌 회색 안내 문구) */
+        #doc-editor-title::placeholder, #doc-editor-body::placeholder { color: #b6ada0; }
+        #doc-editor-body::placeholder { line-height: 1.7; }
         /* Star ratings */
         .rt-stars { position: relative; display: inline-block; line-height: 1; white-space: nowrap; }
         .rt-stars .rt-base { color: #e2ddd4; letter-spacing: 1px; }

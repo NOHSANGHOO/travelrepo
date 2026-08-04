@@ -288,7 +288,7 @@
             }
         } else {
             titleEl.value = "";
-            bodyEl.value = CFG.placeholder;
+            bodyEl.value = ""; // 골격은 실제 텍스트가 아니라 회색 placeholder로만 보여줍니다
             if (IS_RECIPE) {
                 const catSel = document.getElementById("doc-editor-cat");
                 if (catSel) catSel.value = "korean";
@@ -515,6 +515,10 @@
             if (catSel) catSel.innerHTML = RECIPE_CATS.map(function (c) { return `<option value="${c.key}">${c.icon} ${c.label}</option>`; }).join("");
         }
         document.getElementById("doc-search").placeholder = CFG.singular + " 제목 검색";
+        const titleInput = document.getElementById("doc-editor-title");
+        if (titleInput) titleInput.placeholder = CFG.singular + " 제목";
+        const bodyInput = document.getElementById("doc-editor-body");
+        if (bodyInput) bodyInput.placeholder = CFG.placeholder;
         const listEl = document.getElementById("doc-list");
         if (listEl && IS_RECIPE) listEl.addEventListener("pointerdown", pointerDown);
         if (window.Ratings) window.Ratings.onChange(renderList);
