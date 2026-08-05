@@ -331,8 +331,9 @@
             titleEl.value = "";
             bodyEl.value = ""; // 골격은 실제 텍스트가 아니라 회색 placeholder로만 보여줍니다
             if (IS_RECIPE) {
+                // 지금 보고 있던 카테고리를 기본값으로 (검색 중이면 마지막 선택 탭)
                 const catSel = document.getElementById("doc-editor-cat");
-                if (catSel) catSel.value = "korean";
+                if (catSel) catSel.value = currentCat;
             }
         }
         document.getElementById("doc-editor-status").textContent = "";
