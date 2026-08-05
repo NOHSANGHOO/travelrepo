@@ -77,6 +77,19 @@
             border-color: #c2d8ca !important; }
         body.doc-dragging-active { cursor: grabbing; user-select: none; -webkit-user-select: none; }
         body.doc-dragging-active * { cursor: grabbing !important; }
+        /* 우측 하단 플로팅 등록 버튼 (목록 화면 전용)
+           .doc-fab.hidden 을 함께 정의해 Tailwind의 .hidden 과 순서가 꼬여도 확실히 숨겨지도록 함 */
+        .doc-fab { position: fixed; right: 1rem; bottom: calc(1.15rem + env(safe-area-inset-bottom, 0px)); z-index: 55;
+            display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.8rem 1.15rem; border-radius: 9999px;
+            background: #3f735d; color: #fff; font-size: 0.875rem; font-weight: 700;
+            box-shadow: 0 8px 22px rgba(63,115,93,0.36), 0 2px 6px rgba(80,60,40,0.14);
+            transition: transform 0.14s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s ease, background-color 0.18s ease;
+            animation: fabIn 0.32s cubic-bezier(0.22,1,0.36,1) both; }
+        .doc-fab.hidden, #doc-list-view.hidden .doc-fab { display: none; }
+        .doc-fab:hover { background: #355d4b; box-shadow: 0 10px 26px rgba(63,115,93,0.42), 0 2px 6px rgba(80,60,40,0.16); }
+        .doc-fab:active { transform: scale(0.94); }
+        .doc-fab i { font-size: 0.9rem; }
+        @keyframes fabIn { from { opacity: 0; transform: translateY(14px) scale(0.9); } to { opacity: 1; transform: none; } }
         /* 편집기 하단 고정 액션바 (긴 레시피에서도 저장/취소가 항상 보이도록) */
         #doc-editor-view { padding-bottom: 4.75rem; }
         .doc-editor-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 60;
@@ -84,6 +97,7 @@
             padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
             background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             border-top: 1px solid #ece5da; box-shadow: 0 -4px 16px rgba(80,60,40,0.07); }
+        #doc-editor-view.hidden .doc-editor-bar { display: none; }
         /* Editor placeholders (골격 예시는 실제 입력값이 아닌 회색 안내 문구) */
         #doc-editor-title::placeholder, #doc-editor-body::placeholder { color: #b6ada0; }
         #doc-editor-body::placeholder { line-height: 1.7; }
@@ -139,7 +153,7 @@
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
                 <input id="doc-search" type="text" oninput="filterDocs(this.value)" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="제목 검색">
             </div>
-            <button type="button" id="doc-add-btn" onclick="openDocEditor()" class="hidden w-full mb-3 py-3 rounded-2xl border border-dashed border-teal-300 text-teal-700 text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-95 hover:bg-teal-50">
+            <button type="button" id="doc-add-btn" onclick="openDocEditor()" class="doc-fab hidden">
                 <i class="fa-solid fa-plus"></i> 새 항목
             </button>
             <div id="doc-list" class="space-y-3"></div>
