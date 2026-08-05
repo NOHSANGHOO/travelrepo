@@ -40,41 +40,53 @@
         .md-body th { background: #f0ebe2; }
         .md-body img { max-width: 100%; border-radius: 0.6rem; }
         .md-body hr { border: none; border-top: 1px solid #e7e2d8; margin: 1rem 0; }
-        /* Recipe categories: one bordered container per category so its
-           recipes visually sit *inside* it */
-        .doc-cat { border: 1px solid #e7e0d5; border-left: 4px solid var(--cat, #7d8a7a);
-            border-radius: 1rem; overflow: hidden; background: #fbf8f3; }
-        .cat-header { width: 100%; background: #fff; border-bottom: 1px solid transparent;
-            transition: background-color 0.18s ease, border-color 0.18s ease; cursor: pointer; }
-        .cat-header:hover { background: #fdfcfa; }
-        /* 카테고리 제목: 레시피 제목보다 확실히 크고 진하게 */
-        .cat-title { font-size: 1.0625rem; font-weight: 800; color: #2d2a26; letter-spacing: -0.01em; }
-        .cat-chevron { color: var(--cat, #7d8a7a); transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); }
-        .cat-chevron.open { transform: rotate(90deg); }
-        .cat-count { font-size: 0.7rem; font-weight: 700; color: #fff; background: var(--cat, #7d8a7a);
-            min-width: 1.35rem; height: 1.35rem; padding: 0 0.4rem; border-radius: 9999px;
-            display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.9; }
-        .cat-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.34s cubic-bezier(0.22,1,0.36,1), opacity 0.28s ease; }
-        .doc-cat.open .cat-header { border-bottom-color: #eee7db; }
-        /* 카테고리 안쪽: 살짝 눌린 배경 + 들여쓰기로 소속감 */
-        .cat-list { padding: 0.7rem 0.7rem 0.7rem 1.15rem; display: flex; flex-direction: column; gap: 0.5rem; position: relative; }
-        .cat-list::before { content: ''; position: absolute; left: 0.5rem; top: 0.85rem; bottom: 0.85rem;
-            width: 2px; border-radius: 2px; background: var(--cat, #7d8a7a); opacity: 0.22; }
-        /* 카테고리 안의 레시피 카드는 더 작고 가볍게 → 헤더와 위계 구분 */
-        .cat-list .doc-card { border-radius: 0.75rem; padding: 0.7rem 0.85rem; box-shadow: none;
-            border: 1px solid #ece5da; background: #fff; }
-        .cat-list .doc-card:hover { border-color: #d9cfc0; box-shadow: 0 2px 8px rgba(80,60,40,0.07); }
-        .cat-list .doc-card h3 { font-size: 0.9rem; font-weight: 600; }
+        /* Recipe categories: horizontal tab bar */
+        .cat-tabbar { display: flex; gap: 0.3rem; overflow-x: auto; padding: 0.15rem 0.15rem 0.7rem;
+            -ms-overflow-style: none; scrollbar-width: none; }
+        .cat-tabbar::-webkit-scrollbar { display: none; }
+        .cat-tab { flex: 1 1 0; min-width: max-content; display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.3rem; white-space: nowrap; padding: 0.45rem 0.6rem; border-radius: 9999px;
+            background: #fff; border: 1px solid #e7e0d5; color: #78716c; font-size: 0.8125rem; font-weight: 600;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; }
+        .cat-tab:hover { border-color: #d3c9b9; }
+        .cat-tab:active { transform: scale(0.96); }
+        .cat-tab.active { background: var(--cat, #7d8a7a); border-color: var(--cat, #7d8a7a); color: #fff;
+            box-shadow: 0 3px 10px color-mix(in srgb, var(--cat, #7d8a7a) 35%, transparent); }
+        .cat-tab-count { font-size: 0.7rem; font-weight: 700; padding: 0 0.35rem; min-width: 1.15rem; height: 1.15rem;
+            border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center;
+            background: #f0ebe2; color: #8a8177; }
+        .cat-tab.active .cat-tab-count { background: rgba(255,255,255,0.28); color: #fff; }
+        .cat-tab.drop-hover { border-style: dashed; border-color: #4d8a70; background: #eef5f0; color: #355d4b; transform: scale(1.06); }
+        /* 검색 결과 카드에 붙는 카테고리 칩 */
+        .cat-chip { display: inline-block; margin-top: 0.3rem; font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.45rem;
+            border-radius: 9999px; color: var(--cat, #7d8a7a); background: color-mix(in srgb, var(--cat, #7d8a7a) 13%, #fff);
+            border: 1px solid color-mix(in srgb, var(--cat, #7d8a7a) 28%, #fff); }
+        /* 탭 전환 시 목록이 살짝 올라오며 나타남 */
+        #doc-list.cat-anim > .doc-card { animation: catFade 0.3s cubic-bezier(0.22,1,0.36,1) both; }
+        #doc-list.cat-anim > .doc-card:nth-child(1) { animation-delay: 0ms; }
+        #doc-list.cat-anim > .doc-card:nth-child(2) { animation-delay: 30ms; }
+        #doc-list.cat-anim > .doc-card:nth-child(3) { animation-delay: 60ms; }
+        #doc-list.cat-anim > .doc-card:nth-child(4) { animation-delay: 90ms; }
+        #doc-list.cat-anim > .doc-card:nth-child(n+5) { animation-delay: 120ms; }
+        @keyframes catFade { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
         .doc-card { transition: box-shadow 0.2s ease, transform 0.14s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease, border-color 0.18s ease; }
         .doc-card-ghost { opacity: 0.4; transform: scale(0.98); }
         .doc-grip { touch-action: none; -webkit-tap-highlight-color: transparent; }
         .doc-drag-clone { position: fixed; z-index: 120; pointer-events: none; margin: 0 !important;
             box-shadow: 0 16px 34px rgba(80,60,40,0.24); transform: scale(1.03) rotate(-0.5deg);
             border-color: #c2d8ca !important; }
-        .doc-cat.drop-hover { outline: 2px dashed #98bda8; outline-offset: 3px; border-radius: 1rem; }
-        .doc-cat.drop-hover > .cat-header { background: #eef5f0; border-color: #c2d8ca; }
         body.doc-dragging-active { cursor: grabbing; user-select: none; -webkit-user-select: none; }
         body.doc-dragging-active * { cursor: grabbing !important; }
+        /* 편집기 하단 고정 액션바 (긴 레시피에서도 저장/취소가 항상 보이도록) */
+        #doc-editor-view { padding-bottom: 4.75rem; }
+        .doc-editor-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 60;
+            width: 100%; max-width: 32rem; display: flex; gap: 0.5rem;
+            padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
+            background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-top: 1px solid #ece5da; box-shadow: 0 -4px 16px rgba(80,60,40,0.07); }
+        /* Editor placeholders (골격 예시는 실제 입력값이 아닌 회색 안내 문구) */
+        #doc-editor-title::placeholder, #doc-editor-body::placeholder { color: #b6ada0; }
+        #doc-editor-body::placeholder { line-height: 1.7; }
         /* Star ratings */
         .rt-stars { position: relative; display: inline-block; line-height: 1; white-space: nowrap; }
         .rt-stars .rt-base { color: #e2ddd4; letter-spacing: 1px; }
@@ -122,6 +134,7 @@
     <main class="p-4 max-w-lg mx-auto">
         <!-- List view -->
         <div id="doc-list-view">
+            <div id="cat-tabs"></div>
             <div class="relative mb-3">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
                 <input id="doc-search" type="text" oninput="filterDocs(this.value)" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="제목 검색">
@@ -174,7 +187,8 @@
                 <div id="doc-preview" class="md-body"></div>
             </div>
             <div id="doc-editor-status" class="text-xs text-rose-500 my-2 h-4"></div>
-            <div class="flex gap-2 pb-2">
+            <!-- 저장/취소는 화면 하단에 고정되어 긴 레시피에서도 스크롤 없이 누를 수 있습니다 -->
+            <div class="doc-editor-bar">
                 <button type="button" id="doc-editor-delete" onclick="deleteDoc()" class="hidden px-3 py-2.5 rounded-lg bg-rose-50 text-rose-600 text-sm font-medium"><i class="fa-solid fa-trash"></i></button>
                 <button type="button" onclick="showDocList()" class="flex-1 py-2.5 rounded-lg bg-stone-100 text-stone-600 text-sm font-medium">취소</button>
                 <button type="button" onclick="saveDoc()" class="flex-1 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium">저장</button>
