@@ -108,7 +108,7 @@
         event.target.value = "";
         if (!file) return;
         if (!(window.isAdmin && window.isAdmin())) {
-            alert("관리자만 가져올 수 있습니다.");
+            alert("관리자만 업로드할 수 있습니다.");
             return;
         }
         const reader = new FileReader();
@@ -176,10 +176,10 @@
                 }
                 Promise.all(tasks)
                     .then(function () {
-                        alert("가져오기 완료! 일정이 업데이트되었어요." + (newDays.length ? `\n새 일차 ${newDays.length}개가 추가되었습니다.` : ""));
+                        alert("업로드 완료! 일정이 업데이트되었어요." + (newDays.length ? `\n새 일차 ${newDays.length}개가 추가되었습니다.` : ""));
                     })
                     .catch(function (err) {
-                        alert("가져오기에 실패했어요. 로그인 상태와 권한을 확인해주세요.");
+                        alert("업로드에 실패했어요. 로그인 상태와 권한을 확인해주세요.");
                         console.error(err);
                     });
             } catch (err) {
@@ -232,7 +232,7 @@
         event.target.value = "";
         if (!file) return;
         if (!(window.isAdmin && window.isAdmin())) {
-            alert("관리자만 가져올 수 있습니다.");
+            alert("관리자만 업로드할 수 있습니다.");
             return;
         }
         const api = window.__tripInfoApi;
@@ -280,16 +280,16 @@
                     return s;
                 });
                 if (!sections.length) {
-                    alert("가져올 카드가 없어요. 'section' 열에 카드 제목을 채워주세요.");
+                    alert("업로드할 카드가 없어요. 'section' 열에 카드 제목을 채워주세요.");
                     return;
                 }
                 if (!confirm(`CSV의 내용으로 상세 정보를 덮어씁니다.\n카드 ${sections.length}개: ${order.join(", ")}\n계속할까요?`)) return;
                 api.replaceAll(sections)
                     .then(function () {
-                        alert("가져오기 완료! 상세 정보가 업데이트되었어요.");
+                        alert("업로드 완료! 상세 정보가 업데이트되었어요.");
                     })
                     .catch(function (err) {
-                        alert("가져오기에 실패했어요. 로그인 상태와 권한을 확인해주세요.");
+                        alert("업로드에 실패했어요. 로그인 상태와 권한을 확인해주세요.");
                         console.error(err);
                     });
             } catch (err) {
