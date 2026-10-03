@@ -104,7 +104,7 @@
     }
     window.__renderTripInfo = renderInfo;
 
-    // CSV 내보내기/가져오기(trip-io.js)에서 쓰는 API
+    // CSV 내보내기/업로드(trip-io.js)에서 쓰는 API
     window.__tripInfoApi = {
         getSections: function () {
             return getSections();
