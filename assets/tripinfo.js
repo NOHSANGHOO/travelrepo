@@ -104,6 +104,22 @@
     }
     window.__renderTripInfo = renderInfo;
 
+    // CSV 내보내기/가져오기(trip-io.js)에서 쓰는 API
+    window.__tripInfoApi = {
+        getSections: function () {
+            return getSections();
+        },
+        getPresetKeys: function () {
+            return INFO_PRESETS.map(function (p) {
+                return p.key;
+            });
+        },
+        newSectionId: newSectionId,
+        replaceAll: function (sections) {
+            return persist(sections);
+        }
+    };
+
     function populateIconSelect() {
         const select = document.getElementById("info-modal-icon");
         if (!select || select.options.length) return;
