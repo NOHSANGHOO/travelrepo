@@ -189,4 +189,114 @@
         };
         reader.readAsText(file, "utf-8");
     };
+
+    // ===== 상세 정보(tripinfo) CSV =====
+    // 한 행 = 정보 카드의 한 줄. 같은 `section` 값이 하나의 카드로 묶입니다.
+    // `icon`은 카드의 첫 행에만 적으면 되고, `label`을 비우면 불릿(•) 줄이 됩니다.
+    const INFO_COLUMNS = ["section", "icon", "label", "value"];
+
+    window.exportInfoCsv = function () {
+        const api = window.__tripInfoApi;
+        if (!api) return;
+        const sections = api.getSections();
+        const rows = [INFO_COLUMNS.slice()];
+        sections.forEach(function (s) {
+            const list = s.rows || [];
+            if (!list.length) {
+                rows.push([s.title || "", s.icon || "info", "", ""]);
+                return;
+            }
+            list.forEach(function (r, i) {
+                rows.push([s.title || "", i === 0 ? s.icon || "info" : "", r.label || "", r.value || ""]);
+            });
+        });
+        download(`${TRIP_ID}-info.csv`, toCsv(rows));
+    };
+
+    window.downloadInfoCsvTemplate = function () {
+        const rows = [
+            INFO_COLUMNS.slice(),
+            ["항공편 정보", "plane", "가는 편", "7/26 07:30 인천 → 09:20 간사이 (MM712)"],
+            ["항공편 정보", "", "오는 편", "7/29 10:40 간사이 → 12:40 인천"],
+            ["항공편 정보", "", "예약번호", "ABC1234567"],
+            ["숙소 정보", "hotel", "숙소명", "고베 ○○호텔"],
+            ["숙소 정보", "", "주소", "Kobe, Chuo Ward, ..."],
+            ["숙소 정보", "", "", "체크인 15:00 / 체크아웃 11:00 (항목을 비우면 불릿 줄)"],
+            ["참고 링크", "link", "블로그 후기", "https://example.com/post"]
+        ];
+        download("travel-info-template.csv", toCsv(rows));
+    };
+
+    window.importInfoCsv = function (event) {
+        const file = event.target.files && event.target.files[0];
+        event.target.value = "";
+        if (!file) return;
+        if (!(window.isAdmin && window.isAdmin())) {
+            alert("관리자만 가져올 수 있습니다.");
+            return;
+        }
+        const api = window.__tripInfoApi;
+        if (!api) {
+            alert("상세 정보를 아직 불러오지 못했어요. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const rows = parseCsv(e.target.result);
+                if (rows.length < 2) {
+                    alert("데이터가 없는 CSV예요.");
+                    return;
+                }
+                const header = rows[0].map((h) => h.trim());
+                const col = {};
+                INFO_COLUMNS.forEach((name) => (col[name] = header.indexOf(name)));
+                if (col.section < 0) {
+                    alert("CSV에 최소한 'section'(카드 제목) 열이 필요해요. 양식을 내려받아 확인해주세요.");
+                    return;
+                }
+
+                const presetKeys = api.getPresetKeys();
+                const order = [];
+                const byTitle = {};
+                for (let r = 1; r < rows.length; r++) {
+                    const cells = rows[r];
+                    const title = (cells[col.section] || "").trim();
+                    if (!title) continue;
+                    if (!byTitle[title]) {
+                        byTitle[title] = { id: api.newSectionId(), icon: "", title: title, rows: [] };
+                        order.push(title);
+                    }
+                    const sec = byTitle[title];
+                    const icon = col.icon >= 0 ? (cells[col.icon] || "").trim() : "";
+                    if (!sec.icon && icon) sec.icon = presetKeys.indexOf(icon) >= 0 ? icon : "info";
+                    const label = col.label >= 0 ? (cells[col.label] || "").trim() : "";
+                    const value = col.value >= 0 ? cells[col.value] || "" : "";
+                    if (label || value.trim()) sec.rows.push({ label: label, value: value });
+                }
+                const sections = order.map(function (t) {
+                    const s = byTitle[t];
+                    if (!s.icon) s.icon = "info";
+                    return s;
+                });
+                if (!sections.length) {
+                    alert("가져올 카드가 없어요. 'section' 열에 카드 제목을 채워주세요.");
+                    return;
+                }
+                if (!confirm(`CSV의 내용으로 상세 정보를 덮어씁니다.\n카드 ${sections.length}개: ${order.join(", ")}\n계속할까요?`)) return;
+                api.replaceAll(sections)
+                    .then(function () {
+                        alert("가져오기 완료! 상세 정보가 업데이트되었어요.");
+                    })
+                    .catch(function (err) {
+                        alert("가져오기에 실패했어요. 로그인 상태와 권한을 확인해주세요.");
+                        console.error(err);
+                    });
+            } catch (err) {
+                alert("CSV를 읽는 중 오류가 발생했어요.");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file, "utf-8");
+    };
 })();
