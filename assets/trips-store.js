@@ -81,7 +81,8 @@
                 b.collection("trips").doc(id).delete(),
                 b.collection("itineraries").doc(id).delete().catch(function () {}),
                 b.collection("tripinfo").doc(id).delete().catch(function () {}),
-                b.collection("notes").doc(id).delete().catch(function () {})
+                b.collection("notes").doc(id).delete().catch(function () {}),
+                b.collection("tripimages").doc(id).delete().catch(function () {})
             ]);
         }
     };

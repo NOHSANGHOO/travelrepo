@@ -156,6 +156,10 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
          allow read: if true;
          allow write: if isAdmin();
        }
+       match /tripimages/{tripId} {
+         allow read: if true;
+         allow write: if isAdmin();
+       }
        match /comments/{commentId} {
          allow read: if true;
          allow create: if request.auth != null
@@ -241,6 +245,14 @@ Firestore 컬렉션: `trips`(여행 메타/목록), `itineraries`(일정 카드)
 - CSV 열: `date, order, presetKey, time, title, desc, mapQuery` (최소 `date`, `title`만 있으면 됩니다).
 - **`date` 열은 실제 여행 날짜**(`2026-07-26` 형식)를 씁니다. 내부의 `day1/day2` 같은 값 대신 날짜로 관리하므로 사람이 읽고 편집하기 쉽습니다. 업로드 시 날짜가 기존 일차와 맞으면 그 일차를 덮어쓰고, **새로운 날짜가 있으면 그 날짜의 일차를 자동으로 추가**합니다. (과거에 만든 `day` 열 CSV도 하위호환으로 인식합니다.)
 - **한계**: CSV 업로드는 **현재 열려 있는 여행의 일정만** 업데이트합니다. 완전히 새로운 여행 자체를 CSV로 만들 수는 없고, 새 여행은 목록의 "새 여행 만들기"로 생성합니다.
+
+## 정보 이미지 (상세 정보 탭)
+
+상세 정보 탭 맨 위의 **"정보 이미지"** 카드에 예약 확인서·지도·일정표 같은 이미지를 **최대 2장** 올려두고, 누구나 눌러서 확대해 볼 수 있습니다.
+
+- **올리기/삭제**: 관리자만 가능합니다. 올릴 때 브라우저에서 자동으로 압축(긴 변 1600px, JPEG)되어 용량 걱정이 없습니다.
+- **확대 보기**: 이미지를 누르면 전체 화면으로 열립니다. 마우스 휠·더블클릭·핀치로 확대/축소하고, 확대 상태에서 끌어서 이동합니다. 2장이면 좌우 화살표(또는 확대 전 좌우로 쓸기)로 넘기고, `Esc`·✕·바깥 영역으로 닫습니다.
+- **저장 방식**: Firebase Storage는 유료 요금제 전환이 필요해서, 압축한 이미지를 Firestore `tripimages/{여행id}` 문서에 저장합니다 (무료). 이 컬렉션 규칙이 필요합니다(위 규칙에 포함).
 
 ## 상세 정보 CSV 내보내기 / 업로드
 
